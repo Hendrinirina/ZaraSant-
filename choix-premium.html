@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choisir Formation Premium</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #0f0f0f;
+      --text-color: white;
+      --card-bg: #1e1e1e;
+      --accent: #00c3ff;
+    }
+
+    body.light {
+      --bg-color: #f5f5f5;
+      --text-color: #1a1a1a;
+      --card-bg: #ffffff;
+      --accent: #007bff;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', sans-serif;
+      transition: 0.3s ease;
+    }
+
+    .top-bar {
+      background: var(--card-bg);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #333;
+    }
+
+    .title {
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+
+    .theme-toggle {
+      cursor: pointer;
+      color: var(--text-color);
+    }
+
+    .content {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .option {
+      background: var(--card-bg);
+      border-left: 5px solid var(--accent);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .option:hover {
+      background: #222;
+      transform: scale(1.02);
+    }
+
+    .option h3 {
+      margin-top: 0;
+      color: var(--accent);
+    }
+
+    .option p {
+      margin: 10px 0 0;
+      font-size: 0.95em;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: var(--card-bg);
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      border-top: 2px solid #333;
+    }
+
+    .bottom-nav a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 0.75em;
+      transition: color 0.3s ease;
+    }
+
+    .bottom-nav a:hover {
+      color: var(--accent);
+    }
+
+    .bottom-nav svg {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 3px;
+    }
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centre horizontalement */
+  justify-content: center; /* Centre verticalement */
+  min-height: 60vh; /* Prend plus de hauteur pour mieux centrer */
+  min-height: 40vh; /* Réduit de 60vh à 40vh */
+  padding-top: 20px; /* Réduit de 40px à 20px */
+}
+}
+
+.option {
+  width: auto; /* Largeur similaire au bouton Se connecter */
+  max-width: 205px; /* Largeur maximale */
+  text-align: center; /* Texte centré */
+  padding: 10px 19px; /* Plus de padding pour un bouton */
+  background: var(--accent); /* Utilise la couleur d'accent */
+  color: white; /* Texte blanc */
+  border-left: none; /* Supprime la bordure gauche */
+  border-radius: 30px; /* Arrondi plus standard pour bouton */
+}
+
+.option h3 {
+  color: white;
+  font-size: 0.9rem;  /* Taille réduite (environ 14px) */
+  font-weight: 500;   /* Graisse moyenne */
+  letter-spacing: 0.5px; /* Espacement des lettres légèrement réduit */
+  margin: 0;          /* Supprime les marges par défaut */
+}
+
+.option p {
+  display: none; /* Cache le paragraphe */
+}
+.info-text {
+  text-align: center;
+  margin-bottom: 30px;
+  max-width: 500px;
+  padding: 0 20px;
+}
+
+.info-text h2 {
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.info-text h3 {
+  color: var(--text-color);
+  margin-bottom: 15px;
+}
+
+.info-text p {
+  margin-bottom: 10px;
+}
+
+.info-text ul {
+  text-align: left;
+  display: inline-block;
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.info-text li {
+  margin-bottom: 8px;
+  font-size: 0.95em;
+}
+  </style>
+</head>
+<body>
+  <header class="top-bar">
+    <div class="title">Prise de rendez-vous </div>
+    <div class="theme-toggle" id="themeToggle">
+      <i data-lucide="sun" id="themeIcon"></i>
+    </div>
+  </header>
+
+<div class="content" style="text-align: center; padding-top: 40px;">
+  <h1 style="margin-bottom: 15px;">
+  <h2 style="margin-bottom: 15px;">Consultation en ligne simplifiée</h2>
+  
+  <div style="display: inline-block; text-align: left; margin-bottom: 15px;">
+    <p>Accédez à notre réseau de professionnels de santé qualifiés et :</p>
+    <ul style="list-style: none; padding-left: 5px;">
+      <li style="margin-bottom: 8px;">✓ Prenez rendez-vous</li>
+      <li style="margin-bottom: 8px;">✓ Choisissez votre spécialiste (médecin généraliste ou spécialiste)</li>
+      <li style="margin-bottom: 8px;">✓ Consultez par visioconférence</li>
+    </ul>
+  </div>
+  
+  <button id="loginButton" style="
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: bold;
+    margin-top: 20px;
+    cursor: pointer;
+  ">
+    SE CONNECTER
+  </button>
+</div>
+
+  <nav class="bottom-nav">
+    <a href="bitget.html"><i data-lucide="home"></i>Accueil</a>
+    <a href="formation.html"><i data-lucide="heart-pulse"></i>Support médical</a>
+    <a href="choix-premium.html"><i data-lucide="calendar"></i>Rendez-vous</a>
+    <a href="compte.html"><i data-lucide="user-round"></i>Compte</a>
+  </nav>
+
+  <script>
+    lucide.createIcons();
+
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+
+    function setTheme(mode) {
+      document.body.classList.remove("light", "dark");
+      document.body.classList.add(mode);
+      themeIcon.setAttribute("data-lucide", mode === "light" ? "moon" : "sun");
+      lucide.createIcons();
+      localStorage.setItem("theme", mode);
+    }
+
+    themeToggle.addEventListener("click", () => {
+      const current = document.body.classList.contains("light") ? "dark" : "light";
+      setTheme(current);
+    });
+
+    // Ajout de la redirection pour le bouton SE CONNECTER
+    document.getElementById("loginButton").addEventListener("click", function() {
+      window.location.href = "se-connecter.html";
+    });
+
+    setTheme(localStorage.getItem("theme") || "dark");
+  </script>
+</body>
+</html>
