@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page en pr茅paration - ZaraSant茅</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #2e86de;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .construction-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 30%;
+            background: linear-gradient(90deg, #2e86de, #4cc9f0);
+            border-radius: 10px;
+            animation: progress 2s infinite alternate;
+        }
+        
+        .tools {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .tool {
+            font-size: 2rem;
+            animation: float 3s infinite ease-in-out;
+        }
+        
+        .tool:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        
+        .tool:nth-child(3) {
+            animation-delay: 1s;
+        }
+        
+        .pulse-circle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(46, 134, 222, 0.1);
+            animation: pulse 4s infinite;
+            z-index: 1;
+        }
+        
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes progress {
+            0% { width: 30%; }
+            100% { width: 70%; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes pulse {
+            0% { 
+                transform: scale(0.5);
+                opacity: 0.8;
+            }
+            100% { 
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+        
+        .logo {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.2rem;
+            color: #2e86de;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cercles d'arri猫re-plan anim茅s -->
+    <div class="pulse-circle" style="width: 100px; height: 100px; top: 20%; left: 20%;"></div>
+    <div class="pulse-circle" style="width: 150px; height: 150px; top: 60%; left: 70%; animation-delay: 1s;"></div>
+    <div class="pulse-circle" style="width: 80px; height: 80px; top: 70%; left: 30%; animation-delay: 2s;"></div>
+    
+    <div class="container">
+        <div class="logo">ZaraSant茅</div>
+        <h1>Page en cours de pr茅paration</h1>
+        
+        <div class="construction-icon">馃毀</div>
+        
+        <p>Nous travaillons activement sur cette page pour vous offrir la meilleure exp茅rience possible. Revenez bient么t pour d茅couvrir nos nouvelles fonctionnalit茅s !</p>
+        
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        
+        <div class="tools">
+            <div class="tool">馃敤</div>
+            <div class="tool">馃洜锔�</div>
+            <div class="tool">馃捇</div>
+        </div>
+        
+        <p><strong>Merci pour votre patience !</strong></p>
+    </div>
+
+    <script>
+        // Ajouter des cercles anim茅s dynamiquement
+        function createAnimatedCircles() {
+            const body = document.body;
+            const colors = ['rgba(46, 134, 222, 0.1)', 'rgba(76, 201, 240, 0.1)', 'rgba(233, 126, 253, 0.1)'];
+            
+            for (let i = 0; i < 5; i++) {
+                const circle = document.createElement('div');
+                circle.classList.add('pulse-circle');
+                
+                // Propri茅t茅s al茅atoires
+                const size = Math.random() * 100 + 50;
+                const top = Math.random() * 100;
+                const left = Math.random() * 100;
+                const delay = Math.random() * 4;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                circle.style.width = `${size}px`;
+                circle.style.height = `${size}px`;
+                circle.style.top = `${top}%`;
+                circle.style.left = `${left}%`;
+                circle.style.animationDelay = `${delay}s`;
+                circle.style.backgroundColor = color;
+                
+                body.appendChild(circle);
+            }
+        }
+        
+        // D茅marrer les animations apr猫s le chargement de la page
+        window.addEventListener('load', function() {
+            createAnimatedCircles();
+        });
+    </script>
+</body>
+</html>
