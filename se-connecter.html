@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion - ZaraSanté</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f5f7fa;
+      --text-color: #333;
+      --card-bg: #ffffff;
+      --accent: #007bff;
+      --input-bg: #f0f4f8;
+      --border-color: #dbe1e8;
+      --error-color: #e74c3c;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: 0.3s ease;
+    }
+
+    .auth-container {
+      max-width: 290px;
+      margin: 30px auto;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .auth-header h1 {
+      color: var(--accent);
+      margin-bottom: 5px;
+      font-size: 1.5em;
+    }
+
+    .auth-header p {
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 0.9em;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      box-sizing: border-box;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--input-bg);
+      font-size: 14px;
+      transition: 0.3s;
+      padding-right: 40px;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 38px;
+      cursor: pointer;
+      color: #666;
+      background: none;
+      border: none;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 15px 0;
+      font-size: 0.9em;
+    }
+
+    .checkbox-group input {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+    }
+
+    .register-link a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: var(--error-color);
+      font-size: 0.8em;
+      margin-top: 5px;
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .auth-container {
+        margin: 20px auto;
+        padding: 15px;
+      }
+      
+      .form-group input {
+        padding: 10px;
+        padding-right: 40px;
+      }
+      
+      .password-toggle {
+        top: 35px;
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>Se connecter</h1>
+      <p>Accédez à votre espace <strong>ZaraSanté</strong></p>
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="loginEmail">Adresse email</label>
+        <input type="email" id="loginEmail" required>
+        <div class="error-message" id="emailError">Email invalide</div>
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">Mot de passe</label>
+        <input type="password" id="loginPassword" required>
+        <button type="button" class="password-toggle" id="passwordToggle">
+          <i data-lucide="eye"></i>
+        </button>
+        <div class="error-message" id="passwordError">Mot de passe incorrect</div>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="rememberMe">
+        <label for="rememberMe">Se souvenir de moi</label>
+      </div>
+
+      <button type="submit" class="btn">Se connecter</button>
+    </form>
+
+    <div class="register-link">
+      <p>Pas encore inscrit ? <a href="choix.html">Créer un compte</a></p>
+      <p><a href="forgot-password.html" style="font-size:0.8em;">Mot de passe oublié ?</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Initialisation des icônes
+    lucide.createIcons();
+
+    // Gestion de l'icône œil pour le mot de passe
+    const passwordToggle = document.getElementById('passwordToggle');
+    const passwordInput = document.getElementById('loginPassword');
+    let isPasswordVisible = false;
+
+    passwordToggle.addEventListener('click', function() {
+      isPasswordVisible = !isPasswordVisible;
+      passwordInput.type = isPasswordVisible ? 'text' : 'password';
+      
+      // Changer l'icône
+      const icon = passwordToggle.querySelector('i');
+      if (isPasswordVisible) {
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    });
+
+    // Gestion du formulaire
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Réinitialiser les erreurs
+      document.getElementById('emailError').style.display = 'none';
+      document.getElementById('passwordError').style.display = 'none';
+
+      // Récupération des valeurs
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const rememberMe = document.getElementById('rememberMe').checked;
+
+      // Validation basique
+      if (!email.includes('@') || !email.includes('.')) {
+        document.getElementById('emailError').style.display = 'block';
+        return;
+      }
+
+      if (password.length < 6) {
+        document.getElementById('passwordError').style.display = 'block';
+        return;
+      }
+
+      // Vérification dans userAccounts
+      const userAccounts = JSON.parse(localStorage.getItem('userAccounts') || '[]');
+      const user = userAccounts.find(user => user.email === email && user.password === password);
+      
+      if (user) {
+        // Connexion réussie
+        localStorage.setItem('currentUser', user.email);
+        
+        if (rememberMe) {
+          localStorage.setItem('rememberMe', 'true');
+        } else {
+          localStorage.removeItem('rememberMe');
+        }
+        
+        alert('Connexion réussie !');
+        window.location.href = 'bitget2.html';
+      } else {
+        document.getElementById('passwordError').style.display = 'block';
+        alert('Email ou mot de passe incorrect');
+      }
+    });
+
+    // Pré-remplissage si "Se souvenir de moi"
+    if (localStorage.getItem('rememberMe') === 'true') {
+      const currentUserEmail = localStorage.getItem('currentUser');
+      if (currentUserEmail) {
+        document.getElementById('loginEmail').value = currentUserEmail;
+        document.getElementById('rememberMe').checked = true;
+      }
+    }
+  </script>
+</body>
+</html>
