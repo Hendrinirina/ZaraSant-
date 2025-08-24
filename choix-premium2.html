@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prendre Rendez-vous</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #0f0f0f;
+      --text-color: white;
+      --card-bg: #1e1e1e;
+      --accent: #00c3ff;
+      --success: #28a745;
+    }
+
+    body.light {
+      --bg-color: #f5f5f5;
+      --text-color: #1a1a1a;
+      --card-bg: #ffffff;
+      --accent: #007bff;
+      --success: #28a745;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', sans-serif;
+      transition: 0.3s ease;
+    }
+
+    .top-bar {
+      background: var(--card-bg);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #333;
+    }
+
+    .title {
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+
+    .theme-toggle {
+      cursor: pointer;
+      color: var(--text-color);
+    }
+
+    .content {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .search-section {
+      background: var(--card-bg);
+      padding: 20px 15px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .search-title {
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background: var(--card-bg);
+      color: var(--text-color);
+      margin-bottom: 15px;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    .search-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      width: 100%;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 0 auto;
+    }
+
+    .search-btn:hover {
+      background: #0088cc;
+    }
+
+    .results-section {
+      display: none;
+    }
+
+    .doctor-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .doctor-name {
+      color: var(--accent);
+      margin: 0 0 10px 0;
+      font-size: 1.2em;
+    }
+
+    .doctor-specialty {
+      color: #aaa;
+      margin: 0 0 15px 0;
+      font-size: 0.9em;
+    }
+
+    .doctor-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9em;
+    }
+
+    .book-btn {
+      background: var(--success);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s ease;
+    }
+
+    .book-btn:hover {
+      background: #218838;
+    }
+
+    .no-results {
+      text-align: center;
+      color: #aaa;
+      padding: 40px 0;
+      display: none;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: var(--card-bg);
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      border-top: 2px solid #333;
+    }
+
+    .bottom-nav a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 0.75em;
+      transition: color 0.3s ease;
+    }
+
+    .bottom-nav a:hover {
+      color: var(--accent);
+    }
+
+    .bottom-nav svg {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 3px;
+    }
+
+    /* Modal de rendez-vous */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-title {
+      color: var(--accent);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      background: var(--card-bg);
+      color: var(--text-color);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .confirm-btn {
+      background: var(--success);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .cancel-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      flex: 1;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header class="top-bar">
+    <div class="title">Prise de rendez-vous</div>
+    <div class="theme-toggle" id="themeToggle">
+      <i data-lucide="sun" id="themeIcon"></i>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="search-section">
+      <h2 class="search-title">Rechercher un médecin</h2>
+      <input type="text" class="search-input" id="searchInput" placeholder="Nom du médecin ou spécialité...">
+      <button class="search-btn" onclick="searchDoctors()">
+        <i data-lucide="search"></i> RECHERCHER
+      </button>
+    </div>
+
+    <div class="results-section" id="resultsSection">
+      <!-- Les résultats seront générés dynamiquement par JavaScript -->
+    </div>
+
+    <div class="no-results" id="noResults">
+      <i data-lucide="search" width="48" height="48"></i>
+      <p>Utilisez la recherche pour trouver des médecins</p>
+      <p>Recherchez par nom ou par spécialité</p>
+    </div>
+
+    <div class="no-results" id="noNameResults" style="display: none;">
+      <i data-lucide="user-x" width="48" height="48"></i>
+      <p>Aucun médecin ne porte ce nom</p>
+      <p>Vérifiez l'orthographe ou essayez une autre recherche</p>
+    </div>
+
+    <div class="no-results" id="noSpecialtyResults" style="display: none;">
+      <i data-lucide="stethoscope" width="48" height="48"></i>
+      <p>Spécialité non trouvée</p>
+      <p>Cette spécialité n'est pas encore disponible sur notre plateforme</p>
+    </div>
+  </div>
+
+  <!-- Modal de prise de rendez-vous -->
+  <div class="modal" id="bookingModal">
+    <div class="modal-content">
+      <h3 class="modal-title" id="modalDoctorName">Prendre Rendez-vous</h3>
+      
+      <div class="form-group">
+        <label for="appointmentDate">Date souhaitée</label>
+        <input type="date" id="appointmentDate" min="">
+      </div>
+
+      <div class="form-group">
+        <label for="appointmentTime">Heure</label>
+        <select id="appointmentTime">
+          <option value="">Sélectionnez une heure</option>
+          <option value="09:00">09:00</option>
+          <option value="10:00">10:00</option>
+          <option value="11:00">11:00</option>
+          <option value="14:00">14:00</option>
+          <option value="15:00">15:00</option>
+          <option value="16:00">16:00</option>
+          <option value="17:00">17:00</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="appointmentReason">Motif de la consultation</label>
+        <input type="text" id="appointmentReason" placeholder="Ex: Consultation routine, problème spécifique...">
+      </div>
+
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="closeBookingModal()">Annuler</button>
+        <button class="confirm-btn" onclick="confirmAppointment()">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="bitget2.html"><i data-lucide="home"></i>Accueil</a>
+    <a href="formation2.html"><i data-lucide="heart-pulse"></i>Support médical</a>
+    <a href="choix-premium2.html"><i data-lucide="calendar"></i>Rendez-vous</a>
+    <a href="compte2.html"><i data-lucide="user-round"></i>Compte</a>
+  </nav>
+
+  <script>
+    lucide.createIcons();
+
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+
+    function setTheme(mode) {
+      document.body.classList.remove("light", "dark");
+      document.body.classList.add(mode);
+      themeIcon.setAttribute("data-lucide", mode === "light" ? "moon" : "sun");
+      lucide.createIcons();
+      localStorage.setItem("theme", mode);
+    }
+
+    themeToggle.addEventListener("click", () => {
+      const current = document.body.classList.contains("light") ? "dark" : "light";
+      setTheme(current);
+    });
+
+    // Base de données simulée de médecins Malagasy
+    const doctors = [
+      {
+        name: "Dr. Andrianavalona Rakoto",
+        specialty: "Cardiologue",
+        location: "Analakely, Antananarivo",
+        rating: "4.8/5 (124 avis)",
+        availability: "Disponible demain",
+        searchTerms: ["andrianavalona", "rakoto", "cardiologue", "cœur", "cardio", "andry"]
+      },
+      {
+        name: "Dr. Nirina Rasoanaivo",
+        specialty: "Généraliste",
+        location: "Mahamasina, Antananarivo",
+        rating: "4.6/5 (89 avis)",
+        availability: "Disponible aujourd'hui",
+        searchTerms: ["nirina", "rasoanaivo", "généraliste", "generaliste", "médecin", "medecin", "nirina"]
+      },
+      {
+        name: "Dr. Hanta Randriamampionona",
+        specialty: "Pédiatre",
+        location: "Isoraka, Antananarivo",
+        rating: "4.9/5 (156 avis)",
+        availability: "Disponible cette semaine",
+        searchTerms: ["hanta", "randriamampionona", "pédiatre", "pediatre", "enfant", "enfants", "zaza", "hanta"]
+      },
+      {
+        name: "Dr. Tiana Rajaonarison",
+        specialty: "Dentiste",
+        location: "Ambatonakanga, Antananarivo",
+        rating: "4.7/5 (98 avis)",
+        availability: "Disponible vendredi",
+        searchTerms: ["tiana", "rajaonarison", "dentiste", "dent", "dents", "dentaire", "nify", "tiana"]
+      },
+      {
+        name: "Dr. Fenohery Andriamalala",
+        specialty: "Gynécologue",
+        location: "Ankorondrano, Antananarivo",
+        rating: "4.8/5 (112 avis)",
+        availability: "Disponible lundi",
+        searchTerms: ["fenohery", "andriamalala", "gynécologue", "gynecologue", "femme", "gynéco", "gyneco", "feno"]
+      },
+      {
+        name: "Dr. Solohery Ramaroson",
+        specialty: "Ophtalmologiste",
+        location: "Antsahavola, Antananarivo",
+        rating: "4.5/5 (76 avis)",
+        availability: "Disponible mercredi",
+        searchTerms: ["solohery", "ramaroson", "ophtalmologiste", "ophtalmo", "yeux", "maso", "vue", "solo"]
+      },
+      {
+        name: "Dr. Lova Ratsimbazafy",
+        specialty: "Dermatologue",
+        location: "Faravohitra, Antananarivo",
+        rating: "4.7/5 (103 avis)",
+        availability: "Disponible jeudi",
+        searchTerms: ["lova", "ratsimbazafy", "dermatologue", "peau", "hoditra", "lova"]
+      }
+    ];
+
+    // Set minimum date to today
+    document.getElementById('appointmentDate').min = new Date().toISOString().split('T')[0];
+
+    function searchDoctors() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+      const resultsSection = document.getElementById('resultsSection');
+      const noResults = document.getElementById('noResults');
+      const noNameResults = document.getElementById('noNameResults');
+      const noSpecialtyResults = document.getElementById('noSpecialtyResults');
+      
+      // Masquer tous les messages d'erreur d'abord
+      noResults.style.display = 'none';
+      noNameResults.style.display = 'none';
+      noSpecialtyResults.style.display = 'none';
+      
+      if (searchTerm === '') {
+        noResults.style.display = 'block';
+        resultsSection.style.display = 'none';
+        return;
+      }
+      
+      // Filtrer les médecins selon la recherche
+      const filteredDoctors = doctors.filter(doctor => 
+        doctor.searchTerms.some(term => term.includes(searchTerm)) ||
+        doctor.name.toLowerCase().includes(searchTerm) ||
+        doctor.specialty.toLowerCase().includes(searchTerm)
+      );
+      
+      if (filteredDoctors.length === 0) {
+        resultsSection.style.display = 'none';
+        
+        // Déterminer le type d'erreur
+        const isNameSearch = /^[a-zéèêëàâäôöûüç\s]+$/i.test(searchTerm);
+        const isSpecialtySearch = !isNameSearch || searchTerm.length > 3;
+        
+        if (isNameSearch) {
+          noNameResults.style.display = 'block';
+        } else {
+          noSpecialtyResults.style.display = 'block';
+        }
+        return;
+      }
+      
+      // Afficher les résultats
+      resultsSection.innerHTML = '';
+      resultsSection.style.display = 'block';
+      
+      filteredDoctors.forEach(doctor => {
+        const doctorCard = document.createElement('div');
+        doctorCard.className = 'doctor-card';
+        doctorCard.innerHTML = `
+          <h3 class="doctor-name">${doctor.name}</h3>
+          <p class="doctor-specialty">${doctor.specialty}</p>
+          <div class="doctor-info">
+            <span class="info-item"><i data-lucide="map-pin"></i> ${doctor.location}</span>
+            <span class="info-item"><i data-lucide="star"></i> ${doctor.rating}</span>
+            <span class="info-item"><i data-lucide="clock"></i> ${doctor.availability}</span>
+          </div>
+          <button class="book-btn" onclick="openBookingModal('${doctor.name}', '${doctor.specialty}')">
+            <i data-lucide="calendar"></i> PRENDRE RENDEZ-VOUS
+          </button>
+        `;
+        resultsSection.appendChild(doctorCard);
+      });
+      
+      // Recréer les icônes Lucide pour les nouveaux éléments
+      lucide.createIcons();
+    }
+
+    function openBookingModal(doctorName, specialty) {
+      document.getElementById('modalDoctorName').textContent = `Rendez-vous avec ${doctorName} - ${specialty}`;
+      document.getElementById('bookingModal').style.display = 'flex';
+    }
+
+    function closeBookingModal() {
+      document.getElementById('bookingModal').style.display = 'none';
+      // Reset form
+      document.getElementById('appointmentDate').value = '';
+      document.getElementById('appointmentTime').value = '';
+      document.getElementById('appointmentReason').value = '';
+    }
+
+    function confirmAppointment() {
+      const date = document.getElementById('appointmentDate').value;
+      const time = document.getElementById('appointmentTime').value;
+      const reason = document.getElementById('appointmentReason').value;
+      
+      if (!date || !time || !reason) {
+        alert('Veuillez remplir tous les champs');
+        return;
+      }
+      
+      // Simulation de prise de rendez-vous
+      alert(`✅ Rendez-vous confirmé !\n\nMédecin: ${document.getElementById('modalDoctorName').textContent}\nDate: ${date}\nHeure: ${time}\nMotif: ${reason}\n\nVous recevrez un rappel par email.`);
+      
+      closeBookingModal();
+      
+      // Stocker le rendez-vous dans localStorage
+      const appointments = JSON.parse(localStorage.getItem('userAppointments') || '[]');
+      appointments.push({
+        doctor: document.getElementById('modalDoctorName').textContent,
+        date: date,
+        time: time,
+        reason: reason,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem('userAppointments', JSON.stringify(appointments));
+    }
+
+    setTheme(localStorage.getItem("theme") || "dark");
+  </script>
+</body>
+</html>
