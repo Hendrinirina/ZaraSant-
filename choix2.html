@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choisir le type de compte - ZaraSanté</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeIn 0s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2e86de 0%, #4cc9f0 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+            font-size: 1.8rem;
+        }
+        
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+        
+        .option {
+            width: 280px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid #e0e0e0;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0s ease-out forwards;
+        }
+        
+        .option:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .option:nth-child(2) {
+            animation-delay: 0s;
+        }
+        
+        .option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(46, 134, 222, 0.15);
+            border-color: #2e86de;
+        }
+        
+        .option.selected {
+            border-color: #2e86de;
+            background: rgba(46, 134, 222, 0.05);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(46, 134, 222, 0.2);
+            z-index: 2;
+        }
+        
+        .option.selected::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 40px 40px 0;
+            border-color: transparent #2e86de transparent transparent;
+            transition: all 0s ease;
+        }
+        
+        .checkmark {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            color: white;
+            font-size: 14px;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0s ease;
+        }
+        
+        .option.selected .checkmark {
+            opacity: 1;
+        }
+        
+        .icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #2e86de;
+            transition: transform 0s ease;
+        }
+        
+        .option:hover .icon {
+            transform: scale(1.1);
+        }
+        
+        .option-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .option-desc {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .continue-btn {
+            display: block;
+            width: 200px;
+            margin: 0 auto;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #2e86de 0%, #4cc9f0 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            box-shadow: 0 5px 15px rgba(46, 134, 222, 0.3);
+        }
+        
+        .continue-btn.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .continue-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(46, 134, 222, 0.4);
+        }
+        
+        .continue-btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: translateY(-5px) scale(1.02); }
+            50% { transform: translateY(-5px) scale(1.05); }
+            100% { transform: translateY(-5px) scale(1.02); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .option {
+                width: 100%;
+                max-width: 320px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">ZaraSanté</div>
+            <div class="subtitle">Votre santé, notre priorité</div>
+        </div>
+        
+        <div class="content">
+            <h1 class="title">Choisissez le type de compte</h1>
+            
+            <div class="options">
+                <div class="option" data-value="moi">
+                    <div class="icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2 class="option-title">Pour moi</h2>
+                    <p class="option-desc">Créez un compte personnel pour gérer votre santé et prendre rendez-vous avec des professionnels.</p>
+                    <div class="checkmark"><i class="fas fa-check"></i></div>
+                </div>
+                
+                <div class="option" data-value="autre">
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h2 class="option-title">Pour un proche</h2>
+                    <p class="option-desc">Créez un compte pour un membre de votre famille ou un proche dont vous gérez la santé.</p>
+                    <div class="checkmark"><i class="fas fa-check"></i></div>
+                </div>
+            </div>
+            
+            <button id="continueBtn" class="continue-btn">Continuer</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const options = document.querySelectorAll('.option');
+            const continueBtn = document.getElementById('continueBtn');
+            let selectedOption = null;
+            
+            // Ajouter les écouteurs d'événements pour les options
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Si cette option est déjà sélectionnée, ne rien faire
+                    if (this.classList.contains('selected')) return;
+                    
+                    // Retirer la sélection précédente
+                    options.forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Ajouter la sélection à l'option cliquée
+                    this.classList.add('selected');
+                    selectedOption = this.getAttribute('data-value');
+                    
+                    // Afficher le bouton continuer avec animation
+                    continueBtn.classList.add('show');
+                    
+                    // Animation de pulse pour feedback
+                    this.style.animation = 'pulse 0.4s ease';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 400);
+                });
+            });
+            
+            // Gérer le clic sur le bouton continuer
+            continueBtn.addEventListener('click', function() {
+                if (!selectedOption) {
+                    // Animation d'alerte si aucune option sélectionnée
+                    options.forEach(option => {
+                        option.style.animation = 'pulse 0.4s ease';
+                        setTimeout(() => {
+                            option.style.animation = '';
+                        }, 400);
+                    });
+                    return;
+                }
+                
+                // Animation de chargement
+                const originalText = this.innerHTML;
+                this.innerHTML = 'Redirection... <i class="fas fa-spinner fa-spin"></i>';
+                this.style.opacity = '0.9';
+                this.disabled = true;
+                
+                // Redirection après un court délai pour l'animation
+                setTimeout(() => {
+                    window.location.href = 'auth.html';
+                }, 800);
+            });
+        });
+    </script>
+</body>
+</html>
