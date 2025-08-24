@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription - Trading Community</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f5f7fa;
+      --text-color: #333;
+      --card-bg: #ffffff;
+      --accent: #007bff;
+      --input-bg: #f0f4f8;
+      --border-color: #dbe1e8;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: 0.3s ease;
+    }
+
+    .auth-container {
+      max-width: 290px;
+      margin: 30px auto;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .auth-header h1 {
+      color: var(--accent);
+      margin-bottom: 5px;
+    }
+
+    .auth-header p {
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      box-sizing: border-box;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--input-bg);
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .phone-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .phone-prefix {
+      width: 30%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--input-bg);
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .phone-number {
+      width: 70%;
+    }
+
+    .phone-format-hint {
+      color: #666;
+      font-size: 0.8em;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
+    }
+
+    .gender-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .gender-option {
+      flex: 1;
+    }
+
+    .gender-option input {
+      display: none;
+    }
+
+    .gender-option label {
+      display: block;
+      padding: 10px 5px;
+      background: var(--input-bg);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .gender-option input:checked + label {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .login-link a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    input[type="date"] {
+      position: relative;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      position: absolute;
+      right: 10px;
+      padding: 5px;
+      background: var(--accent);
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 38px;
+      cursor: pointer;
+      color: #666;
+    }
+    
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 15px;
+      }
+      
+      .form-group input, 
+      .form-group select {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>Créer un compte</h1>
+      <p>Rejoignez <strong>ZaraSanté</strong> en quelques clics</p>
+    </div>
+
+    <form id="registrationForm">
+      <div class="form-group">
+        <label for="fullName">Nom complet</label>
+        <input type="text" id="fullName" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Adresse email</label>
+        <input type="email" id="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" required minlength="6" placeholder="6 caractères minimum">
+        <i class="password-toggle" data-target="password" data-icon="eye"></i>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input type="password" id="confirmPassword" required minlength="6" placeholder="Retapez votre mot de passe">
+        <i class="password-toggle" data-target="confirmPassword" data-icon="eye"></i>
+      </div>
+
+      <div class="form-group">
+        <label for="country">Pays</label>
+        <select id="country" required>
+          <option value="">Sélectionnez votre pays</option>
+          <option value="Madagascar">Madagascar</option>
+          <option value="Mayotte">Mayotte</option>
+          <option value="Comores">Comores</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Numéro de téléphone</label>
+        <div class="phone-group">
+          <input type="text" id="phonePrefix" class="phone-prefix" readonly>
+          <input type="tel" id="phone" class="phone-number" required placeholder="Sélectionnez d'abord votre pays">
+        </div>
+        <div class="phone-format-hint" id="phoneFormatHint"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Sexe</label>
+        <div class="gender-group">
+          <div class="gender-option">
+            <input type="radio" id="male" name="gender" value="Homme" checked>
+            <label for="male">Homme</label>
+          </div>
+          <div class="gender-option">
+            <input type="radio" id="female" name="gender" value="Femme">
+            <label for="female">Femme</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="birthdate">Date de naissance</label>
+        <input type="date" id="birthdate" required>
+      </div>
+
+      <button type="submit" class="btn">S'inscrire</button>
+    </form>
+
+    <div class="login-link">
+      <p>Vous avez déjà un compte ? <a href="se-connecter.html" onclick="window.location.href='auth.html?login=true'">Se connecter</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Initialisation des icônes
+    lucide.createIcons();
+
+    // Gestion automatique du préfixe téléphonique
+    document.getElementById('country').addEventListener('change', function() {
+      const prefixField = document.getElementById('phonePrefix');
+      const phoneField = document.getElementById('phone');
+      const hintField = document.getElementById('phoneFormatHint');
+      
+      const prefixes = {
+        'Madagascar': '+261',
+        'Mayotte': '+262',
+        'Comores': '+269'
+      };
+      
+      const formats = {
+        'Madagascar': 'Format: 32, 33, 34 ou 38 suivi de 7 chiffres (ex: 341234567)',
+        'Mayotte': 'Format: 639 suivi de 6 chiffres (ex: 639123456)',
+        'Comores': 'Format: 3 suivi de 6 chiffres (ex: 3123456)'
+      };
+      
+      if (this.value in prefixes) {
+        prefixField.value = prefixes[this.value];
+        hintField.textContent = formats[this.value];
+        hintField.style.display = 'block';
+        phoneField.placeholder = formats[this.value].match(/ex: (\d+)/)[1];
+      } else {
+        prefixField.value = '';
+        hintField.style.display = 'none';
+        phoneField.placeholder = 'Sélectionnez d\'abord votre pays';
+      }
+    });
+
+    // Gestion du formulaire
+    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Vérification mot de passe
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        alert('Les mots de passe ne correspondent pas');
+        return;
+      }
+
+      if (password.length < 6) {
+        alert('Le mot de passe doit contenir au moins 6 caractères');
+        return;
+      }
+
+      // Validation du numéro de téléphone
+      const country = document.getElementById('country').value;
+      const phone = document.getElementById('phone').value;
+      let phoneValid = true;
+      let phoneError = '';
+
+      if (country === 'Madagascar') {
+        phoneValid = /^(32|33|34|38)\d{7}$/.test(phone);
+        phoneError = 'Format invalide pour Madagascar (doit commencer par 32, 33, 34 ou 38 suivi de 7 chiffres)';
+      } 
+      else if (country === 'Mayotte') {
+        phoneValid = /^639\d{6}$/.test(phone);
+        phoneError = 'Format invalide pour Mayotte (doit commencer par 639 suivi de 6 chiffres)';
+      } 
+      else if (country === 'Comores') {
+        phoneValid = /^3\d{6}$/.test(phone);
+        phoneError = 'Format invalide pour Comores (doit commencer par 3 suivi de 6 chiffres)';
+      }
+
+      if (!phoneValid) {
+        alert(phoneError);
+        return;
+      }
+
+      // Récupération des valeurs
+      const userData = {
+        fullName: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        password: password,
+        phone: document.getElementById('phonePrefix').value + phone,
+        country: country,
+        gender: document.querySelector('input[name="gender"]:checked').value,
+        birthdate: document.getElementById('birthdate').value,
+        emailVerified: false
+      };
+
+      // CORRECTION PRINCIPALE : Enregistrement correct dans localStorage
+      // Récupérer les comptes existants
+      let userAccounts = JSON.parse(localStorage.getItem('userAccounts') || '[]');
+      
+      // Vérifier si l'email existe déjà
+      if (userAccounts.some(user => user.email === userData.email)) {
+        alert('Cet email est déjà utilisé');
+        return;
+      }
+      
+      // Ajouter le nouvel utilisateur
+      userAccounts.push(userData);
+      localStorage.setItem('userAccounts', JSON.stringify(userAccounts));
+      
+      // Définir l'utilisateur courant
+      localStorage.setItem('currentUser', userData.email);
+      
+      // Redirection
+      alert('Inscription réussie !');
+      window.location.href = 'bitget2.html';
+    });
+
+    // Amélioration de l'expérience date
+    const dateInput = document.getElementById('birthdate');
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setFullYear(today.getFullYear() - 18);
+    dateInput.max = maxDate.toISOString().split('T')[0];
+
+    // Gestion des icônes œil pour les mots de passe
+    document.querySelectorAll('.password-toggle').forEach(toggle => {
+      const targetId = toggle.getAttribute('data-target');
+      const targetInput = document.getElementById(targetId);
+      let isVisible = false;
+      
+      toggle.addEventListener('click', () => {
+        isVisible = !isVisible;
+        targetInput.type = isVisible ? 'text' : 'password';
+        toggle.setAttribute('data-icon', isVisible ? 'eye-off' : 'eye');
+        lucide.createIcons(); // Mettre à jour l'icône
+      });
+      
+      // Initialiser l'icône
+      toggle.innerHTML = '<i data-lucide="eye"></i>';
+      lucide.createIcons();
+    });
+
+    // Vérifier si on doit afficher le formulaire de connexion
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('login') === 'true') {
+      // Basculer vers le mode connexion
+      document.querySelector('.auth-header h1').textContent = 'Se connecter';
+      document.querySelector('.auth-header p').innerHTML = 'Accédez à votre compte <strong>ZaraSanté</strong>';
+      document.querySelector('button.btn').textContent = 'Se connecter';
+      document.querySelector('.login-link p').innerHTML = 'Pas encore de compte ? <a href="auth.html">S\'inscrire</a>';
+      
+      // Cacher les champs d'inscription
+      document.getElementById('confirmPassword').closest('.form-group').style.display = 'none';
+      document.getElementById('country').closest('.form-group').style.display = 'none';
+      document.getElementById('phone').closest('.form-group').style.display = 'none';
+      document.querySelector('.gender-group').closest('.form-group').style.display = 'none';
+      document.getElementById('birthdate').closest('.form-group').style.display = 'none';
+      
+      // Modifier le comportement du formulaire pour la connexion
+      document.getElementById('registrationForm').onsubmit = function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        // Vérifier les identifiants
+        const userAccounts = JSON.parse(localStorage.getItem('userAccounts') || '[]');
+        const user = userAccounts.find(u => u.email === email && u.password === password);
+        
+        if (user) {
+          localStorage.setItem('currentUser', user.email);
+          alert('Connexion réussie !');
+          window.location.href = 'bitget2.html';
+        } else {
+          alert('Email ou mot de passe incorrect');
+        }
+      };
+    }
+  </script>
+</body>
+</html>
