@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription Médecin - ZaraSanté</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f5f7fa;
+      --text-color: #333;
+      --card-bg: #ffffff;
+      --accent: #007bff;
+      --input-bg: #f0f4f8;
+      --border-color: #dbe1e8;
+      --success: #28a745;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: 0.3s ease;
+    }
+
+    .auth-container {
+      max-width: 320px;
+      margin: 30px auto;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .auth-header h1 {
+      color: var(--accent);
+      margin-bottom: 5px;
+    }
+
+    .auth-header p {
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      box-sizing: border-box;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--input-bg);
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .phone-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .phone-prefix {
+      width: 30%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--input-bg);
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .phone-number {
+      width: 70%;
+    }
+
+    .phone-format-hint {
+      color: #666;
+      font-size: 0.8em;
+      margin-top: 5px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
+    }
+
+    .gender-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .gender-option {
+      flex: 1;
+    }
+
+    .gender-option input {
+      display: none;
+    }
+
+    .gender-option label {
+      display: block;
+      padding: 10px 5px;
+      background: var(--input-bg);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .gender-option input:checked + label {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: var(--success);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .login-link a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    input[type="date"] {
+      position: relative;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      position: absolute;
+      right: 10px;
+      padding: 5px;
+      background: var(--accent);
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 38px;
+      cursor: pointer;
+      color: #666;
+    }
+    
+    .file-upload {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+    
+    .file-upload-btn {
+      border: 1px solid var(--border-color);
+      background: var(--input-bg);
+      color: #666;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .file-upload-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    .file-name {
+      font-size: 14px;
+      margin-top: 5px;
+      color: #666;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .confirmation-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .confirmation-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 400px;
+      animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .confirmation-icon {
+      font-size: 48px;
+      color: var(--success);
+      margin-bottom: 15px;
+    }
+    
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 15px;
+      }
+      
+      .form-group input, 
+      .form-group select,
+      .form-group textarea {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>Inscription Médecin</h1>
+      <p>Rejoignez <strong>ZaraSanté</strong> en tant que professionnel de santé</p>
+    </div>
+
+    <form id="doctorRegistrationForm">
+      <div class="form-group">
+        <label for="fullName">Nom complet</label>
+        <input type="text" id="fullName" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Adresse email</label>
+        <input type="email" id="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" required minlength="6" placeholder="6 caractères minimum">
+        <i class="password-toggle" data-target="password" data-icon="eye"></i>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input type="password" id="confirmPassword" required minlength="6" placeholder="Retapez votre mot de passe">
+        <i class="password-toggle" data-target="confirmPassword" data-icon="eye"></i>
+      </div>
+
+      <div class="form-group">
+        <label for="country">Pays</label>
+        <select id="country" required>
+          <option value="">Sélectionnez votre pays</option>
+          <option value="Madagascar" selected>Madagascar</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Numéro de téléphone</label>
+        <div class="phone-group">
+          <input type="text" id="phonePrefix" class="phone-prefix" value="+261" readonly>
+          <input type="tel" id="phone" class="phone-number" required placeholder="ex: 341234567">
+        </div>
+        <div class="phone-format-hint" id="phoneFormatHint">Format: 32, 33, 34 ou 38 suivi de 7 chiffres (ex: 341234567)</div>
+      </div>
+
+      <div class="form-group">
+        <label>Sexe</label>
+        <div class="gender-group">
+          <div class="gender-option">
+            <input type="radio" id="male" name="gender" value="Homme" checked>
+            <label for="male">Homme</label>
+          </div>
+          <div class="gender-option">
+            <input type="radio" id="female" name="gender" value="Femme">
+            <label for="female">Femme</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="birthdate">Date de naissance</label>
+        <input type="date" id="birthdate" required>
+      </div>
+
+      <div class="form-group">
+        <label for="specialty">Spécialité médicale</label>
+        <select id="specialty" required>
+          <option value="">Sélectionnez votre spécialité</option>
+          <option value="Anesthésiologie">Anesthésiologie</option>
+          <option value="Cardiologie">Cardiologie</option>
+          <option value="Dermatologie">Dermatologie</option>
+          <option value="Endocrinologie">Endocrinologie</option>
+          <option value="Gastro-entérologie">Gastro-entérologie</option>
+          <option value="Gynécologie">Gynécologie</option>
+          <option value="Hématologie">Hématologie</option>
+          <option value="Médecine générale">Médecine générale</option>
+          <option value="Médecine interne">Médecine interne</option>
+          <option value="Néphrologie">Néphrologie</option>
+          <option value="Neurologie">Neurologie</option>
+          <option value="Oncologie">Oncologie</option>
+          <option value="Ophtalmologie">Ophtalmologie</option>
+          <option value="ORL">Oto-rhino-laryngologie (ORL)</option>
+          <option value="Pédiatrie">Pédiatrie</option>
+          <option value="Pneumologie">Pneumologie</option>
+          <option value="Psychiatrie">Psychiatrie</option>
+          <option value="Radiologie">Radiologie</option>
+          <option value="Rhumatologie">Rhumatologie</option>
+          <option value="Chirurgie générale">Chirurgie générale</option>
+          <option value="Chirurgie orthopédique">Chirurgie orthopédique</option>
+          <option value="Chirurgie plastique">Chirurgie plastique</option>
+          <option value="Urologie">Urologie</option>
+          <option value="Autre">Autre spécialité</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="yearsExperience">Années d'expérience</label>
+        <input type="number" id="yearsExperience" min="0" max="50" required>
+      </div>
+
+      <div class="form-group">
+        <label for="cin">Carte d'identité nationale (CIN)</label>
+        <div class="file-upload">
+          <div class="file-upload-btn">
+            <span>Télécharger la CIN</span>
+            <i data-lucide="upload"></i>
+          </div>
+          <input type="file" class="file-upload-input" id="cin" accept=".pdf,.jpg,.jpeg,.png" required>
+        </div>
+        <div class="file-name" id="cinFileName"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="diploma">Diplôme de médecine</label>
+        <div class="file-upload">
+          <div class="file-upload-btn">
+            <span>Télécharger le diplôme</span>
+            <i data-lucide="upload"></i>
+          </div>
+          <input type="file" class="file-upload-input" id="diploma" accept=".pdf,.jpg,.jpeg,.png" required>
+        </div>
+        <div class="file-name" id="diplomaFileName"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="cv">Curriculum Vitae (CV)</label>
+        <div class="file-upload">
+          <div class="file-upload-btn">
+            <span>Télécharger le CV</span>
+            <i data-lucide="upload"></i>
+          </div>
+          <input type="file" class="file-upload-input" id="cv" accept=".pdf,.doc,.docx" required>
+        </div>
+        <div class="file-name" id="cvFileName"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="lm">Lettre de motivation</label>
+        <div class="file-upload">
+          <div class="file-upload-btn">
+            <span>Télécharger la lettre</span>
+            <i data-lucide="upload"></i>
+          </div>
+          <input type="file" class="file-upload-input" id="lm" accept=".pdf,.doc,.docx" required>
+        </div>
+        <div class="file-name" id="lmFileName"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="license">Licence d'exercice</label>
+        <div class="file-upload">
+          <div class="file-upload-btn">
+            <span>Télécharger la licence</span>
+            <i data-lucide="upload"></i>
+          </div>
+          <input type="file" class="file-upload-input" id="license" accept=".pdf,.jpg,.jpeg,.png" required>
+        </div>
+        <div class="file-name" id="licenseFileName"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="otherDocs">Autres documents (optionnel)</label>
+        <div class="file-upload">
+          <div class="file-upload-btn">
+            <span>Télécharger d'autres documents</span>
+            <i data-lucide="upload"></i>
+          </div>
+          <input type="file" class="file-upload-input" id="otherDocs" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple>
+        </div>
+        <div class="file-name" id="otherDocsFileName"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="bio">Présentation professionnelle</label>
+        <textarea id="bio" rows="4" placeholder="Décrivez brièvement votre parcours et approche médicale..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-success">Postuler</button>
+    </form>
+
+    <div class="login-link">
+      <p>Vous avez déjà un compte ? <a href="se-connecter.html">Se connecter</a></p>
+    </div>
+  </div>
+
+  <div class="confirmation-modal" id="confirmationModal">
+    <div class="confirmation-content">
+      <div class="confirmation-icon">
+        <i data-lucide="clock"></i>
+      </div>
+      <h2>Demande envoyée</h2>
+      <p>Nous allons traiter votre demande dans les plus brefs délais. Veuillez vous préparer pour un entretien en visioconférence dans les prochains jours si votre profil retient notre attention.</p>
+      <button class="btn" onclick="closeConfirmation()">Fermer</button>
+    </div>
+  </div>
+
+  <script>
+    // Initialisation des icônes
+    lucide.createIcons();
+
+    // Pré-remplir le format de téléphone pour Madagascar
+    document.getElementById('phoneFormatHint').textContent = 'Format: 32, 33, 34 ou 38 suivi de 7 chiffres (ex: 341234567)';
+    document.getElementById('phone').placeholder = 'ex: 341234567';
+
+    // Gestion des uploads de fichiers
+    document.querySelectorAll('.file-upload-input').forEach(input => {
+      input.addEventListener('change', function() {
+        const fileNameElement = document.getElementById(this.id + 'FileName');
+        if (this.files.length > 0) {
+          if (this.files.length === 1) {
+            fileNameElement.textContent = this.files[0].name;
+          } else {
+            fileNameElement.textContent = this.files.length + ' fichiers sélectionnés';
+          }
+        } else {
+          fileNameElement.textContent = '';
+        }
+      });
+    });
+
+    // Gestion du formulaire
+    document.getElementById('doctorRegistrationForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Vérification mot de passe
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        alert('Les mots de passe ne correspondent pas');
+        return;
+      }
+
+      if (password.length < 6) {
+        alert('Le mot de passe doit contenir au moins 6 caractères');
+        return;
+      }
+
+      // Validation du numéro de téléphone
+      const phone = document.getElementById('phone').value;
+      const phoneValid = /^(32|33|34|38)\d{7}$/.test(phone);
+      
+      if (!phoneValid) {
+        alert('Format invalide pour Madagascar (doit commencer par 32, 33, 34 ou 38 suivi de 7 chiffres)');
+        return;
+      }
+
+      // Vérification des fichiers
+      const requiredFiles = ['cin', 'diploma', 'cv', 'lm', 'license'];
+      for (const fileId of requiredFiles) {
+        const fileInput = document.getElementById(fileId);
+        if (!fileInput.files || fileInput.files.length === 0) {
+          alert(`Veuillez télécharger ${getFileLabel(fileId)}`);
+          return;
+        }
+      }
+
+      // Récupération des valeurs
+      const doctorData = {
+        fullName: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        password: password,
+        phone: document.getElementById('phonePrefix').value + phone,
+        country: document.getElementById('country').value,
+        gender: document.querySelector('input[name="gender"]:checked').value,
+        birthdate: document.getElementById('birthdate').value,
+        specialty: document.getElementById('specialty').value,
+        yearsExperience: document.getElementById('yearsExperience').value,
+        bio: document.getElementById('bio').value,
+        status: 'pending', // En attente de validation
+        applicationDate: new Date().toISOString()
+      };
+
+      // Ici, normalement, on enverrait les données à un serveur
+      // Pour l'instant, on stocke dans localStorage en attendant la base de données
+      let doctorApplications = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+      
+      // Vérifier si l'email existe déjà
+      if (doctorApplications.some(doctor => doctor.email === doctorData.email)) {
+        alert('Une demande avec cet email existe déjà');
+        return;
+      }
+      
+      // Ajouter la nouvelle demande
+      doctorApplications.push(doctorData);
+      localStorage.setItem('doctorApplications', JSON.stringify(doctorApplications));
+      
+      // Afficher le message de confirmation
+      document.getElementById('confirmationModal').style.display = 'flex';
+    });
+
+    // Fonction pour fermer la modal de confirmation
+    function closeConfirmation() {
+      document.getElementById('confirmationModal').style.display = 'none';
+      document.getElementById('doctorRegistrationForm').reset();
+      document.querySelectorAll('.file-name').forEach(el => el.textContent = '');
+      
+      // Réinitialiser le préfixe téléphonique
+      document.getElementById('phonePrefix').value = '+261';
+    }
+
+    // Fonction utilitaire pour obtenir le label des fichiers
+    function getFileLabel(fileId) {
+      const labels = {
+        'cin': 'la carte d\'identité nationale',
+        'diploma': 'le diplôme de médecine',
+        'cv': 'le curriculum vitae',
+        'lm': 'la lettre de motivation',
+        'license': 'la licence d\'exercice'
+      };
+      return labels[fileId] || 'le document requis';
+    }
+
+    // Amélioration de l'expérience date
+    const dateInput = document.getElementById('birthdate');
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setFullYear(today.getFullYear() - 25); // Au moins 25 ans pour être médecin
+    dateInput.max = maxDate.toISOString().split('T')[0];
+
+    // Gestion des icônes œil pour les mots de passe
+    document.querySelectorAll('.password-toggle').forEach(toggle => {
+      const targetId = toggle.getAttribute('data-target');
+      const targetInput = document.getElementById(targetId);
+      let isVisible = false;
+      
+      toggle.addEventListener('click', () => {
+        isVisible = !isVisible;
+        targetInput.type = isVisible ? 'text' : 'password';
+        toggle.setAttribute('data-icon', isVisible ? 'eye-off' : 'eye');
+        lucide.createIcons(); // Mettre à jour l'icône
+      });
+      
+      // Initialiser l'icône
+      toggle.innerHTML = '<i data-lucide="eye"></i>';
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
