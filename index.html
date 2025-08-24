@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZaraSanté</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f0f0f;
+      --text-color: white;
+      --card-bg: #1e1e1e;
+      --title-color: white;
+      --accent: #00f0ff;
+      --warning: #e52e71;
+      --popup-bg: #ffffff;
+      --popup-text: #1a1a1a;
+      --input-bg: #f5f5f5;
+    }
+
+    body.light {
+      --bg-color: #f9f9f9;
+      --text-color: #1a1a1a;
+      --card-bg: #ffffff;
+      --title-color: #1a1a1a;
+      --accent: #007bff;
+      --warning: #d6336c;
+      --popup-bg: #ffffff;
+      --popup-text: #1a1a1a;
+      --input-bg: #f5f5f5;
+    }
+    
+    body.dark {
+      --popup-bg: #2a2a2a;
+      --popup-text: #f0f0f0;
+      --input-bg: #3a3a3a;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .top-bar {
+      background: var(--card-bg);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #333;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .title {
+      font-size: 1.6em;
+      font-weight: 700;
+      color: var(--title-color);
+    }
+
+    .theme-toggle {
+      cursor: pointer;
+      color: var(--text-color);
+    }
+
+    .main-content {
+      padding: 30px 20px 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card, .about, .warning {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      margin-bottom: 25px;
+    }
+
+    .about h3 {
+      color: var(--accent);
+      font-size: 1.4em;
+      margin-top: 0;
+    }
+
+    .warning h3 {
+      color: var(--warning);
+      font-size: 1.4em;
+      margin-top: 0;
+    }
+
+    .about p, .warning p {
+      line-height: 1.6;
+      font-size: 0.95em;
+      color: var(--text-color);
+    }
+
+    .highlight {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .button-group {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 12px;
+      background: #333;
+      color: white;
+      border: none;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #555;
+    }
+
+    .btn.premium {
+      background: linear-gradient(45deg, #ff8a00, #e52e71);
+    }
+
+    .btn.event {
+      background: #007bff;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: var(--card-bg);
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0 8px;
+      border-top: 2px solid #333;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+    }
+
+    .bottom-nav a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #aaa;
+      text-decoration: none;
+      font-size: 0.75em;
+      transition: color 0.3s ease;
+    }
+
+    .bottom-nav a:hover {
+      color: var(--accent);
+    }
+
+    .bottom-nav svg {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 3px;
+      stroke-width: 2;
+    }
+
+    /* Vous êtes docteur ? bouton flottant */
+    #partnerBtn {
+      position: fixed;
+      bottom: 100px;
+      left: 20px;
+      background: #e52e71;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+   #partnerPopup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--popup-bg);
+  color: var(--popup-text);
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  max-width: 90%;
+  width: 360px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+    #partnerPopup textarea,
+    #partnerPopup select,
+    #partnerPopup input {
+      width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  background: var(--input-bg);
+  color: var(--popup-text);
+}
+
+    #partnerPopup button {
+  margin-top: 15px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  background: var(--accent);
+}
+
+#partnerPopup button:last-child {
+  background: gray;
+}
+     body.dark .bottom-nav a {
+      color: white;
+    }
+     body.light .bottom-nav a {
+      color: #111;
+    }
+     .bottom-nav a:hover {
+      color: var(--accent);
+    }
+.top-bar {
+  display: flex;
+  justify-content: space-between; /* Logo à gauche, bouton+icône à droite */
+  align-items: center;            /* CENTRAGE VERTICAL */
+  padding: 8px 16px;
+}
+
+.top-right {
+  display: flex;
+  align-items: center;   /* Centre le bouton et l’icône soleil */
+  gap: 10px;             /* espace entre Connexion et l’icône */
+}
+
+.btn-connexion {
+  background: white;
+  color: #007bff;
+  padding: 6px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+.title {
+  font-family: 'Pacifico', cursive;
+  font-size: 1.8em;
+  font-weight: normal;
+  color: var(--title-color);
+}
+
+.instructions-list {
+  margin: 15px 0;
+  padding-left: 20px;
+  text-align: left;
+}
+
+.instructions-list li {
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.important-note {
+  background: #fff3cd;
+  color: #856404;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 15px 0;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+body.dark .important-note {
+  background: #664d03;
+  color: #ffecb5;
+}
+
+#partnerPopup h4 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+
+#partnerPopup p {
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+  </style>
+</head>
+<body>
+  <header class="top-bar">
+  <div class="top-left">
+    <div class="title">ZaraSanté</div>
+  </div>
+
+  <div class="top-right">
+  <button class="btn-connexion" onclick="window.location.href='se-connecter.html'">
+    Connexion
+  </button>
+
+  <div class="theme-toggle" id="themeToggle" title="Changer de thème">
+    <i data-lucide="sun" id="themeIcon"></i>
+  </div>
+</div>
+</header>
+  <main class="main-content">
+    <div class="card">
+      <h2>Votre santé est notre priorité </h2>
+      <p>Aucune inquiétude ! Nous somme votre compagnon de santé le plus proche au quotidien  </p>
+      <div class="button-group">
+        <a href="formation.html" class="btn">Support médical</a>
+        <a href="choix-premium.html" class="btn premium">Rendez-vous</a>
+        <a href="se-connecter.html" class="btn event">Médecins recommandés</a>
+      </div>
+    </div>
+
+    <div class="about">
+      <h3>Bienvenue sur ZaraSanté</h3>
+      <p>
+        Votre santé, à portée de main. Avec <span class="highlight">ZaraSanté</span>, prenez <strong>rendez-vous</strong> avec un médecin<strong> en quelques clics</strong>, plus besoin de se déplacer ou d'attendre des heures.<br><br>
+         Des <strong>médecins</strong> qualifiés et disponibles, des <strong>rendez-vous</strong> rapides et simples à réserver <br>
+	 Réglez facilement par <strong>Mobile Money</strong> et consultez votre médecin directement en <strong>visioconférence.</strong> <br><br>
+
+        Notre objectif est de vous <em>rendre la vie plus simple</em>, à travers une appli de téléconsultation.
+      </p>
+    </div>
+
+    <div class="warning">
+      <h3>Beaucoup de personnes n'ont pas le temps d'attendre dans une longue file d'attente</h3>
+      <p>
+     Tant de personnes ont besoin d'une application qui leurs facilite la vie, c'est pour cela que <span class="highlight">ZaraSanté</span> est là ! Elle rend la possibilité aux soins à distance.<br><br>
+     <strong>Simple, efficace mais aussi plus rapide</strong>
+      </p>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="bitget.html"><i data-lucide="home"></i>Accueil</a>
+    <a href="formation.html"><i data-lucide="heart-pulse"></i>Support médical</a>
+    <a href="choix-premium.html"><i data-lucide="calendar"></i>Rendez-vous</a>
+    <a href="compte.html"><i data-lucide="user-round"></i>Compte</a>
+  </nav>
+
+  <!-- Partenariat bouton + popup - SEULE SECTION MODIFIÉE -->
+  <button id="partnerBtn">Vous êtes médecin ?</button>
+  <div id="partnerPopup">
+    <h3>Devenez Médecin Partenaire ZaraSanté</h3>
+    <p>Rejoignez notre réseau de professionnels de santé et proposez vos services de consultation en ligne.</p>
+    
+    <h4>Comment postuler :</h4>
+    <ol class="instructions-list">
+      <li>Cliquez sur le bouton "S'inscrire" en bas de cette fenêtre</li>
+      <li>Remplissez le formulaire d'inscription avec vos informations personnelles</li>
+      <li>Sélectionnez "Médecin" comme type de compte</li>
+      <li>Fournissez les documents requis (liste ci-dessous)</li>
+      <li>Soumettez votre candidature</li>
+    </ol>
+    
+    <h4>Documents requis :</h4>
+    <ul class="instructions-list">
+      <li>Diplôme de médecine (scan ou photo)</li>
+      <li>Carte d'identité nationale (CIN) recto-verso</li>
+      <li>Curriculum Vitae (CV) à jour</li>
+      <li>Lettre de motivation</li>
+      <li>Licence d'exercice en cours de validité</li>
+      <li>Tout autre document justifiant de votre spécialité</li>
+    </ul>
+    
+    <div class="important-note">
+      <strong>Note importante :</strong> Votre candidature sera examinée sous 5 jours ouvrés. 
+      Si retenue, un entretien en visioconférence sera programmé.
+    </div>
+    
+    <button onclick="window.location.href='auth2.html'" style="background:#007bff; width: 100%;">S'inscrire maintenant</button>
+    <button onclick="closePartner()" style="background:gray; width: 100%; margin-top: 10px;">Fermer</button>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    const toggle = document.getElementById("themeToggle");
+    const icon = document.getElementById("themeIcon");
+
+    function setTheme(mode) {
+      document.body.className = mode;
+      icon.setAttribute("data-lucide", mode === "light" ? "moon" : "sun");
+      lucide.createIcons();
+      localStorage.setItem("theme", mode);
+    }
+
+    toggle.addEventListener("click", () => {
+      const current = document.body.classList.contains("light") ? "dark" : "light";
+      setTheme(current);
+    });
+
+    setTheme(localStorage.getItem("theme") || "dark");
+
+    // Gestion du bouton partenariat
+    const partnerBtn = document.getElementById("partnerBtn");
+    const partnerPopup = document.getElementById("partnerPopup");
+
+    partnerBtn.onclick = () => partnerPopup.style.display = "block";
+    function closePartner() {
+      partnerPopup.style.display = "none";
+    }
+
+    // Nouvelle fonction pour gérer l'envoi de la candidature médecin
+    function sendDoctorApplication() {
+      const nom = document.getElementById("doctorNom").value.trim();
+      const prenom = document.getElementById("doctorPrenom").value.trim();
+      const email = document.getElementById("doctorEmail").value.trim();
+      const phone = document.getElementById("doctorPhone").value.trim();
+      const specialite = document.getElementById("doctorSpecialite").value.trim();
+      const motivation = document.getElementById("doctorMotivation").value.trim();
+
+      if (!nom || !prenom || !email || !phone || !specialite || !motivation) {
+        alert("Veuillez remplir tous les champs obligatoires (*)");
+        return;
+      }
+
+      const applicationData = {
+        nom, prenom, email, phone, specialite, motivation,
+        timestamp: new Date().toISOString()
+      };
+
+      // Stockage dans localStorage
+      let applications = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+      applications.push(applicationData);
+      localStorage.setItem('doctorApplications', JSON.stringify(applications));
+
+      // Notification admin
+      let notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+      notifications.push({
+        type: "new_application",
+        message: `Nouvelle candidature de ${prenom} ${nom}`,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+
+      alert("Merci ! Nous vous contacterons sous 5 jours. Préparez votre diplôme et pièce d'identité pour l'entretien.");
+      closePartner();
+    }
+  </script>
+</body>
+</html>
