@@ -69,6 +69,16 @@
       transition: 0.3s;
     }
 
+    .name-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .name-group .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
     .phone-group {
       display: flex;
       gap: 10px;
@@ -195,6 +205,15 @@
       .form-group select {
         padding: 10px;
       }
+
+      .name-group {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .name-group .form-group {
+        margin-bottom: 20px;
+      }
     }
   </style>
 </head>
@@ -202,13 +221,20 @@
   <div class="auth-container">
     <div class="auth-header">
       <h1>Créer un compte</h1>
-      <p>Rejoignez <strong>ZaraSanté</strong> en quelques clics</p>
+      <p>Rejoignez <strong>Docteurs O.I</strong> en quelques clics</p>
     </div>
 
     <form id="registrationForm">
-      <div class="form-group">
-        <label for="fullName">Nom complet</label>
-        <input type="text" id="fullName" required>
+      <div class="name-group">
+        <div class="form-group">
+          <label for="lastName">Nom</label>
+          <input type="text" id="lastName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="firstName">Prénom</label>
+          <input type="text" id="firstName" required>
+        </div>
       </div>
 
       <div class="form-group">
@@ -352,7 +378,8 @@
 
       // Récupération des valeurs
       const userData = {
-        fullName: document.getElementById('fullName').value,
+        lastName: document.getElementById('lastName').value,
+        firstName: document.getElementById('firstName').value,
         email: document.getElementById('email').value,
         password: password,
         phone: document.getElementById('phonePrefix').value + phone,
@@ -424,6 +451,9 @@
       document.getElementById('phone').closest('.form-group').style.display = 'none';
       document.querySelector('.gender-group').closest('.form-group').style.display = 'none';
       document.getElementById('birthdate').closest('.form-group').style.display = 'none';
+      
+      // Cacher également les champs de nom et prénom en mode connexion
+      document.querySelector('.name-group').style.display = 'none';
       
       // Modifier le comportement du formulaire pour la connexion
       document.getElementById('registrationForm').onsubmit = function(e) {
