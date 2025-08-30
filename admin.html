@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AdminDOI - Tableau de Bord</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --text: #333;
+            --text-light: #777;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--text);
+            overflow-x: hidden;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+            height: 100%;
+        }
+
+        /* Empêcher le zoom */
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            height: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--primary);
+            color: white;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            padding: 10px 0;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: var(--dark);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        /* Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+
+        .stat-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-header h2 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            margin-left: 10px;
+            width: 200px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        table th {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status.active {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .status.inactive {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--accent);
+        }
+
+        .status.pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 5px;
+            font-size: 1rem;
+        }
+
+        .delete-btn {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--accent);
+        }
+
+        .validate-btn {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .settings-btn {
+            background: rgba(155, 89, 182, 0.2);
+            color: #9b59b6;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Appointments specific styles */
+        .appointment-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .appointment-info h3 {
+            margin-bottom: 5px;
+            color: var(--dark);
+            font-size: 1.2rem;
+        }
+
+        .appointment-info p {
+            color: var(--text-light);
+            margin-bottom: 3px;
+            font-size: 0.9rem;
+        }
+
+        .appointment-actions {
+            display: flex;
+        }
+
+        /* Menu mobile */
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                overflow-y: auto;
+                transition: left 0.3s ease;
+                z-index: 1000;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .sidebar-menu {
+                display: block;
+            }
+            
+            .menu-item {
+                padding: 15px;
+                border-left: none;
+                border-bottom: 2px solid transparent;
+            }
+            
+            .menu-item:hover, .menu-item.active {
+                border-left: none;
+                border-bottom: 2px solid var(--secondary);
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .main-content {
+                padding-top: 70px;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
+            }
+            
+            .appointment-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .appointment-actions {
+                margin-top: 15px;
+                align-self: flex-end;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .user-info {
+                margin-top: 15px;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-box {
+                margin-top: 15px;
+                width: 100%;
+            }
+            
+            .search-box input {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 15px;
+                padding-top: 70px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-card i {
+                font-size: 2rem;
+            }
+            
+            .stat-card h3 {
+                font-size: 1.5rem;
+            }
+            
+            table th, table td {
+                padding: 12px 8px;
+            }
+            
+            .action-btn {
+                padding: 6px 10px;
+                margin-right: 3px;
+                font-size: 0.9rem;
+            }
+            
+            .appointment-card {
+                padding: 10px;
+            }
+        }
+
+        /* Overlay pour mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        /* Section titles */
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary);
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        .toast.error {
+            background: var(--accent);
+        }
+
+        /* Modal pour afficher les identifiants */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: fadeIn 0.5s;
+        }
+        
+        .modal-title {
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .credentials {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .credentials p {
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    <div class="toast" id="toast">Opération réussie!</div>
+    
+    <!-- Modal pour afficher les identifiants -->
+    <div class="modal" id="credentialsModal">
+        <div class="modal-content">
+            <h2 class="modal-title">Identifiants Médecin</h2>
+            <p>Voici les identifiants de connexion pour le médecin.</p>
+            
+            <div class="credentials" id="generatedCredentials">
+                <!-- Les identifiants seront affichés ici -->
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn btn-secondary" onclick="closeCredentialsModal()">Fermer</button>
+                <button class="modal-btn btn-primary" onclick="copyCredentials()">Copier les identifiants</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-hospital"></i> AdminDOI</h2>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-item active" data-target="dashboard">
+                    <i class="fas fa-home"></i> Tableau de bord
+                </div>
+                <div class="menu-item" data-target="patients">
+                    <i class="fas fa-user-injured"></i> Patients
+                </div>
+                <div class="menu-item" data-target="doctors">
+                    <i class="fas fa-user-md"></i> Médecins
+                </div>
+                <div class="menu-item" data-target="appointments">
+                    <i class="fas fa-calendar-check"></i> Rendez-vous
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <h1 id="main-title">Tableau de Bord Administrateur</h1>
+                <div class="user-info">
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=3498db&color=fff" alt="Admin">
+                    <span>Admin User</span>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="content-section active">
+                <!-- Stats Cards -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <i class="fas fa-user-injured"></i>
+                        <h3 id="total-patients">0</h3>
+                        <p>Patients inscrits</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-user-md"></i>
+                        <h3 id="total-doctors">0</h3>
+                        <p>Médecins actifs</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <h3 id="total-appointments">0</h3>
+                        <p>Rendez-vous aujourd'hui</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3 id="pending-requests">0</h3>
+                        <p>Demandes en attente</p>
+                    </div>
+                </div>
+
+                <!-- Résumé des patients -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2>Patients récemment inscrits</h2>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Rechercher un patient...">
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table id="recent-patients-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Téléphone</th>
+                                    <th>Inscrit le</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les données seront chargées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Résumé des médecins -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2>Médecin récemment inscrits</h2>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Rechercher un médecin...">
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table id="recent-doctors-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Spécialité</th>
+                                    <th>Email</th>
+                                    <th>Inscrit le</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les données seront chargées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patients Section -->
+            <div id="patients-section" class="content-section">
+                <h2 class="section-title">Gestion des Patients</h2>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Tous les patients</h3>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Rechercher un patient...">
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table id="all-patients-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Téléphone</th>
+                                    <th>Inscrit le</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les données seront chargées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doctors Section -->
+            <div id="doctors-section" class="content-section">
+                <h2 class="section-title">Gestion des Médecins</h2>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Tous les médecins</h3>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Rechercher un médecin...">
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table id="all-doctors-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Spécialité</th>
+                                    <th>Email</th>
+                                    <th>Inscrit le</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les données seront chargées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments Section -->
+            <div id="appointments-section" class="content-section">
+                <h2 class="section-title">Gestion des Rendez-vous</h2>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Tous les rendez-vous</h3>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Rechercher un rendez-vous...">
+                        </div>
+                    </div>
+                    <div id="appointments-container">
+                        <!-- Les rendez-vous seront chargés dynamiquement -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Désactiver le zoom
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        });
+
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        // Empêcher le double-tap pour zoomer
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Menu interactif
+        const menuItems = document.querySelectorAll('.menu-item');
+        const sections = {
+            'dashboard': document.getElementById('dashboard-section'),
+            'patients': document.getElementById('patients-section'),
+            'doctors': document.getElementById('doctors-section'),
+            'appointments': document.getElementById('appointments-section')
+        };
+        
+        const mainTitle = document.getElementById('main-title');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const target = item.getAttribute('data-target');
+                
+                if (target) {
+                    // Mettre à jour le menu
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    // Cacher toutes les sections
+                    Object.values(sections).forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Afficher la section cible
+                    sections[target].classList.add('active');
+                    
+                    // Mettre à jour le titre principal
+                    if (target === 'dashboard') {
+                        mainTitle.textContent = 'Tableau de Bord Administrateur';
+                        updateDashboard();
+                    } else if (target === 'patients') {
+                        mainTitle.textContent = 'Gestion des Patients';
+                        loadPatientsTable();
+                    } else if (target === 'doctors') {
+                        mainTitle.textContent = 'Gestion des Médecins';
+                        loadDoctorsTable();
+                    } else if (target === 'appointments') {
+                        mainTitle.textContent = 'Gestion des Rendez-vous';
+                        loadAppointments();
+                    }
+                    
+                    // Sur mobile, fermer le menu après avoir cliqué sur un élément
+                    if (window.innerWidth <= 992) {
+                        sidebar.classList.remove('active');
+                        overlay.classList.remove('active');
+                    }
+                }
+            });
+        });
+
+        // Animation des cartes statistiques
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-5px)';
+                card.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.15)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+            });
+        });
+
+        // Menu mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Adapter la taille du contenu principal
+        function adjustMainContent() {
+            const mainContent = document.querySelector('.main-content');
+            if (window.innerWidth <= 992) {
+                mainContent.style.paddingTop = '70px';
+                mainContent.style.height = 'calc(100vh - 70px)';
+            } else {
+                mainContent.style.paddingTop = '20px';
+                mainContent.style.height = '100%';
+            }
+        }
+
+        window.addEventListener('resize', adjustMainContent);
+        adjustMainContent();
+        
+        // Fonctions pour gérer les comptes
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.remove('error');
+            
+            if (isError) {
+                toast.classList.add('error');
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Charger les données réelles depuis localStorage
+        function getPatients() {
+            return JSON.parse(localStorage.getItem('userAccounts') || '[]');
+        }
+        
+        function getDoctors() {
+            return JSON.parse(localStorage.getItem('doctorApplications') || '[]');
+        }
+        
+        function getApprovedDoctors() {
+            return JSON.parse(localStorage.getItem('approvedDoctors') || '[]');
+        }
+        
+        // Mettre à jour les statistiques du tableau de bord
+        function updateDashboard() {
+            const patients = getPatients();
+            const doctors = getDoctors();
+            const approvedDoctors = getApprovedDoctors();
+            
+            // Mettre à jour les compteurs
+            document.getElementById('total-patients').textContent = patients.length;
+            document.getElementById('total-doctors').textContent = approvedDoctors.length;
+            document.getElementById('pending-requests').textContent = doctors.length;
+            
+            // Mettre à jour les tableaux récents
+            updateRecentPatientsTable(patients.slice(-5).reverse());
+            updateRecentDoctorsTable(approvedDoctors.slice(-5).reverse());
+        }
+        
+        // Mettre à jour le tableau des patients récents
+        function updateRecentPatientsTable(patients) {
+            const tbody = document.querySelector('#recent-patients-table tbody');
+            tbody.innerHTML = '';
+            
+            patients.forEach(patient => {
+                const tr = document.createElement('tr');
+                const signupDate = new Date(patient.signupDate || new Date().toISOString());
+                const formattedDate = signupDate.toLocaleDateString('fr-FR');
+                
+                tr.innerHTML = `
+                    <td>${patient.lastName} ${patient.firstName}</td>
+                    <td>${patient.email}</td>
+                    <td>${patient.phone}</td>
+                    <td>${formulatedDate}</td>
+                    <td><span class="status active">Actif</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Mettre à jour le tableau des médecins récents
+        function updateRecentDoctorsTable(doctors) {
+            const tbody = document.querySelector('#recent-doctors-table tbody');
+            tbody.innerHTML = '';
+            
+            doctors.forEach(doctor => {
+                const tr = document.createElement('tr');
+                const signupDate = new Date(doctor.applicationDate || new Date().toISOString());
+                const formattedDate = signupDate.toLocaleDateString('fr-FR');
+                
+                tr.innerHTML = `
+                    <td>Dr. ${doctor.lastName} ${doctor.firstName}</td>
+                    <td>${doctor.specialty}</td>
+                    <td>${doctor.email}</td>
+                    <td>${formattedDate}</td>
+                    <td><span class="status active">Actif</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Charger le tableau complet des patients
+        function loadPatientsTable() {
+            const patients = getPatients();
+            const tbody = document.querySelector('#all-patients-table tbody');
+            tbody.innerHTML = '';
+            
+            patients.forEach(patient => {
+                const tr = document.createElement('tr');
+                const signupDate = new Date(patient.signupDate || new Date().toISOString());
+                const formattedDate = signupDate.toLocaleDateString('fr-FR');
+                
+                tr.innerHTML = `
+                    <td>${patient.lastName} ${patient.firstName}</td>
+                    <td>${patient.email}</td>
+                    <td>${patient.phone}</td>
+                    <td>${formattedDate}</td>
+                    <td><span class="status active">Actif</span></td>
+                    <td>
+                        <button class="action-btn delete-btn" onclick="deletePatient('${patient.email}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Charger le tableau complet des médecins
+        function loadDoctorsTable() {
+            const pendingDoctors = getDoctors();
+            const approvedDoctors = getApprovedDoctors();
+            const tbody = document.querySelector('#all-doctors-table tbody');
+            tbody.innerHTML = '';
+            
+            // Afficher d'abord les médecins en attente
+            pendingDoctors.forEach(doctor => {
+                const tr = document.createElement('tr');
+                const applicationDate = new Date(doctor.applicationDate || new Date().toISOString());
+                const formattedDate = applicationDate.toLocaleDateString('fr-FR');
+                
+                tr.innerHTML = `
+                    <td>Dr. ${doctor.lastName} ${doctor.firstName}</td>
+                    <td>${doctor.specialty}</td>
+                    <td>${doctor.email}</td>
+                    <td>${formattedDate}</td>
+                    <td><span class="status pending">En attente</span></td>
+                    <td>
+                        <button class="action-btn validate-btn" onclick="validateDoctor('${doctor.email}')"><i class="fas fa-check"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteDoctor('${doctor.email}', false)"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            // Afficher les médecins approuvés
+            approvedDoctors.forEach(doctor => {
+                const tr = document.createElement('tr');
+                const applicationDate = new Date(doctor.applicationDate || new Date().toISOString());
+                const formattedDate = applicationDate.toLocaleDateString('fr-FR');
+                
+                tr.innerHTML = `
+                    <td>Dr. ${doctor.lastName} ${doctor.firstName}</td>
+                    <td>${doctor.specialty}</td>
+                    <td>${doctor.email}</td>
+                    <td>${formattedDate}</td>
+                    <td><span class="status active">Actif</span></td>
+                    <td>
+                        <button class="action-btn settings-btn" onclick="showDoctorCredentials('${doctor.email}')"><i class="fas fa-cog"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteDoctor('${doctor.email}', true)"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // Charger les rendez-vous
+        function loadAppointments() {
+            const appointmentsContainer = document.getElementById('appointments-container');
+            appointmentsContainer.innerHTML = '<p style="text-align: center; padding: 20px; color: #777;">Aucun rendez-vous pour le moment.</p>';
+        }
+        
+        // Fonction pour générer un mot de passe aléatoire
+        function generatePassword(length = 12) {
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                password += charset.charAt(Math.floor(Math.random() * charset.length));
+            }
+            return password;
+        }
+        
+        // Fonction pour générer un identifiant de connexion
+        function generateUsername(firstName, lastName) {
+            const randomNum = Math.floor(100 + Math.random() * 900); // Numéro aléatoire à 3 chiffres
+            return `${firstName.toLowerCase().charAt(0)}${lastName.toLowerCase()}${randomNum}`;
+        }
+        
+        // Afficher les identifiants générés dans une modal
+        function showGeneratedCredentials(doctor, username, password) {
+            const modal = document.getElementById('credentialsModal');
+            const credentialsDiv = document.getElementById('generatedCredentials');
+            
+            credentialsDiv.innerHTML = `
+                <p><strong>Nom:</strong> Dr. ${doctor.firstName} ${doctor.lastName}</p>
+                <p><strong>Spécialité:</strong> ${doctor.specialty}</p>
+                <p><strong>Identifiant:</strong> ${username}</p>
+                <p><strong>Mot de passe:</strong> ${password}</p>
+                <p><strong>Email:</strong> ${doctor.email}</p>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        // Afficher les identifiants d'un médecin existant
+        function showDoctorCredentials(doctorEmail) {
+            const approvedDoctors = getApprovedDoctors();
+            const doctor = approvedDoctors.find(d => d.email === doctorEmail);
+            
+            if (doctor && doctor.username) {
+                const modal = document.getElementById('credentialsModal');
+                const credentialsDiv = document.getElementById('generatedCredentials');
+                
+                credentialsDiv.innerHTML = `
+                    <p><strong>Nom:</strong> Dr. ${doctor.firstName} ${doctor.lastName}</p>
+                    <p><strong>Spécialité:</strong> ${doctor.specialty}</p>
+                    <p><strong>Identifiant:</strong> ${doctor.username}</p>
+                    <p><strong>Mot de passe:</strong> ${doctor.password}</p>
+                    <p><strong>Email:</strong> ${doctor.email}</p>
+                `;
+                
+                modal.style.display = 'flex';
+            } else {
+                showToast('Identifiants non trouvés pour ce médecin', true);
+            }
+        }
+        
+        // Fermer la modal des identifiants
+        function closeCredentialsModal() {
+            document.getElementById('credentialsModal').style.display = 'none';
+        }
+        
+        // Copier les identifiants dans le presse-papier
+        function copyCredentials() {
+            const credentialsText = document.getElementById('generatedCredentials').innerText;
+            navigator.clipboard.writeText(credentialsText).then(() => {
+                showToast('Identifiants copiés dans le presse-papier!');
+            });
+        }
+        
+        // Valider un médecin
+        function validateDoctor(email) {
+            const pendingDoctors = getDoctors();
+            const doctorIndex = pendingDoctors.findIndex(d => d.email === email);
+            
+            if (doctorIndex !== -1) {
+                const doctor = pendingDoctors[doctorIndex];
+                
+                // Générer des identifiants de connexion
+                const username = generateUsername(doctor.firstName, doctor.lastName);
+                const password = generatePassword();
+                
+                // Ajouter les identifiants au compte médecin
+                doctor.username = username;
+                doctor.password = password;
+                doctor.accountActive = true;
+                
+                // Ajouter aux médecins approuvés
+                const approvedDoctors = getApprovedDoctors();
+                approvedDoctors.push(doctor);
+                localStorage.setItem('approvedDoctors', JSON.stringify(approvedDoctors));
+                
+                // Retirer des demandes en attente
+                pendingDoctors.splice(doctorIndex, 1);
+                localStorage.setItem('doctorApplications', JSON.stringify(pendingDoctors));
+                
+                // Afficher les identifiants générés
+                showGeneratedCredentials(doctor, username, password);
+                
+                // Mettre à jour l'affichage
+                loadDoctorsTable();
+                updateDashboard();
+            }
+        }
+        
+        // Supprimer un patient
+        function deletePatient(email) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce patient ?')) {
+                const patients = getPatients();
+                const updatedPatients = patients.filter(p => p.email !== email);
+                localStorage.setItem('userAccounts', JSON.stringify(updatedPatients));
+                
+                // Mettre à jour l'affichage
+                loadPatientsTable();
+                updateDashboard();
+                
+                showToast('Patient supprimé avec succès!');
+            }
+        }
+        
+        // Supprimer un médecin
+        function deleteDoctor(email, isApproved) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce médecin ?')) {
+                if (isApproved) {
+                    // Supprimer des médecins approuvés
+                    const approvedDoctors = getApprovedDoctors();
+                    const updatedDoctors = approvedDoctors.filter(d => d.email !== email);
+                    localStorage.setItem('approvedDoctors', JSON.stringify(updatedDoctors));
+                } else {
+                    // Supprimer des demandes en attente
+                    const pendingDoctors = getDoctors();
+                    const updatedDoctors = pendingDoctors.filter(d => d.email !== email);
+                    localStorage.setItem('doctorApplications', JSON.stringify(updatedDoctors));
+                }
+                
+                // Mettre à jour l'affichage
+                loadDoctorsTable();
+                updateDashboard();
+                
+                showToast('Médecin supprimé avec succès!');
+            }
+        }
+        
+        // Initialiser le tableau de bord au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboard();
+        });
+    </script>
+</body>
+</html>
