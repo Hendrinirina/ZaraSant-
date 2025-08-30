@@ -12,6 +12,7 @@
       --card-bg: #1e1e1e;
       --accent: #00c3ff;
       --success: #28a745;
+      --error: #dc3545;
     }
 
     body.light {
@@ -20,6 +21,7 @@
       --card-bg: #ffffff;
       --accent: #007bff;
       --success: #28a745;
+      --error: #dc3545;
     }
 
     body {
@@ -271,6 +273,68 @@
       flex: 1;
       cursor: pointer;
     }
+
+    .error-message {
+      color: var(--error);
+      font-size: 0.9em;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .availability-calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+    
+    .calendar-day {
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    
+    .calendar-day.available {
+      background: rgba(46, 204, 113, 0.2);
+      border: 1px solid var(--success);
+    }
+    
+    .calendar-day.unavailable {
+      background: rgba(220, 53, 69, 0.2);
+      border: 1px solid var(--error);
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+    
+    .calendar-day.selected {
+      background: var(--success);
+      color: white;
+    }
+    
+    .calendar-header {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -319,39 +383,38 @@
       <h3 class="modal-title" id="modalDoctorName">Prendre Rendez-vous</h3>
       
       <div class="form-group">
-        <label for="appointmentDate">Date souhaitée</label>
-        <input type="date" id="appointmentDate" min="">
+        <label>Calendrier des disponibilités</label>
+        <div class="availability-calendar" id="availabilityCalendar">
+          <!-- Le calendrier sera généré dynamiquement -->
+        </div>
+        <div class="error-message" id="dateError">Date non disponible</div>
       </div>
 
       <div class="form-group">
         <label for="appointmentTime">Heure</label>
         <select id="appointmentTime">
           <option value="">Sélectionnez une heure</option>
-          <option value="09:00">09:00</option>
-          <option value="10:00">10:00</option>
-          <option value="11:00">11:00</option>
-          <option value="14:00">14:00</option>
-          <option value="15:00">15:00</option>
-          <option value="16:00">16:00</option>
-          <option value="17:00">17:00</option>
+          <!-- Les créneaux seront générés dynamiquement -->
         </select>
+        <div class="error-message" id="timeError">Créneau non disponible</div>
       </div>
 
       <div class="form-group">
         <label for="appointmentReason">Motif de la consultation</label>
         <input type="text" id="appointmentReason" placeholder="Ex: Consultation routine, problème spécifique...">
+        <div class="error-message" id="reasonError">Veuillez saisir un motif</div>
       </div>
 
       <div class="modal-buttons">
         <button class="cancel-btn" onclick="closeBookingModal()">Annuler</button>
-        <button class="confirm-btn" onclick="confirmAppointment()">Confirmer</button>
+        <button class="confirm-btn" id="confirmBtn" onclick="confirmAppointment()">Confirmer</button>
       </div>
     </div>
   </div>
 
   <nav class="bottom-nav">
     <a href="bitget2.html"><i data-lucide="home"></i>Accueil</a>
-    <a href="formation2.html"><i data-lucide="heart-pulse"></i>Support médical</a>
+    <a href="formation2.html"><i data-lucide="folder-open"></i>Documents</a>
     <a href="choix-premium2.html"><i data-lucide="calendar"></i>Rendez-vous</a>
     <a href="compte2.html"><i data-lucide="user-round"></i>Compte</a>
   </nav>
@@ -375,68 +438,111 @@
       setTheme(current);
     });
 
-    // Base de données simulée de médecins Malagasy
-    const doctors = [
-      {
-        name: "Dr. Andrianavalona Rakoto",
-        specialty: "Cardiologue",
-        location: "Analakely, Antananarivo",
-        rating: "4.8/5 (124 avis)",
-        availability: "Disponible demain",
-        searchTerms: ["andrianavalona", "rakoto", "cardiologue", "cœur", "cardio", "andry"]
-      },
-      {
-        name: "Dr. Nirina Rasoanaivo",
-        specialty: "Généraliste",
-        location: "Mahamasina, Antananarivo",
-        rating: "4.6/5 (89 avis)",
-        availability: "Disponible aujourd'hui",
-        searchTerms: ["nirina", "rasoanaivo", "généraliste", "generaliste", "médecin", "medecin", "nirina"]
-      },
-      {
-        name: "Dr. Hanta Randriamampionona",
-        specialty: "Pédiatre",
-        location: "Isoraka, Antananarivo",
-        rating: "4.9/5 (156 avis)",
-        availability: "Disponible cette semaine",
-        searchTerms: ["hanta", "randriamampionona", "pédiatre", "pediatre", "enfant", "enfants", "zaza", "hanta"]
-      },
-      {
-        name: "Dr. Tiana Rajaonarison",
-        specialty: "Dentiste",
-        location: "Ambatonakanga, Antananarivo",
-        rating: "4.7/5 (98 avis)",
-        availability: "Disponible vendredi",
-        searchTerms: ["tiana", "rajaonarison", "dentiste", "dent", "dents", "dentaire", "nify", "tiana"]
-      },
-      {
-        name: "Dr. Fenohery Andriamalala",
-        specialty: "Gynécologue",
-        location: "Ankorondrano, Antananarivo",
-        rating: "4.8/5 (112 avis)",
-        availability: "Disponible lundi",
-        searchTerms: ["fenohery", "andriamalala", "gynécologue", "gynecologue", "femme", "gynéco", "gyneco", "feno"]
-      },
-      {
-        name: "Dr. Solohery Ramaroson",
-        specialty: "Ophtalmologiste",
-        location: "Antsahavola, Antananarivo",
-        rating: "4.5/5 (76 avis)",
-        availability: "Disponible mercredi",
-        searchTerms: ["solohery", "ramaroson", "ophtalmologiste", "ophtalmo", "yeux", "maso", "vue", "solo"]
-      },
-      {
-        name: "Dr. Lova Ratsimbazafy",
-        specialty: "Dermatologue",
-        location: "Faravohitra, Antananarivo",
-        rating: "4.7/5 (103 avis)",
-        availability: "Disponible jeudi",
-        searchTerms: ["lova", "ratsimbazafy", "dermatologue", "peau", "hoditra", "lova"]
-      }
-    ];
+    // Fonction pour obtenir les médecins validés depuis le localStorage
+    function getApprovedDoctors() {
+      return JSON.parse(localStorage.getItem('approvedDoctors') || '[]');
+    }
 
-    // Set minimum date to today
-    document.getElementById('appointmentDate').min = new Date().toISOString().split('T')[0];
+    // Fonction pour obtenir les disponibilités des médecins
+    function getDoctorAvailabilities() {
+      return JSON.parse(localStorage.getItem('doctorAvailabilities') || '[]');
+    }
+
+    // Fonction pour obtenir les rendez-vous existants
+    function getAppointments() {
+      return JSON.parse(localStorage.getItem('appointments') || '[]');
+    }
+
+    // Fonction pour générer des termes de recherche à partir du nom et de la spécialité
+    function generateSearchTerms(doctor) {
+      const terms = [];
+      
+      // Ajouter le nom complet
+      terms.push(doctor.lastName.toLowerCase());
+      terms.push(doctor.firstName.toLowerCase());
+      terms.push(`${doctor.firstName.toLowerCase()} ${doctor.lastName.toLowerCase()}`);
+      
+      // Ajouter la spécialité
+      terms.push(doctor.specialty.toLowerCase());
+      
+      // Ajouter des variations de la spécialité
+      if (doctor.specialty.includes('é')) {
+        terms.push(doctor.specialty.toLowerCase().replace('é', 'e'));
+      }
+      if (doctor.specialty.includes('è')) {
+        terms.push(doctor.specialty.toLowerCase().replace('è', 'e'));
+      }
+      
+      // Ajouter des mots-clés selon la spécialité
+      if (doctor.specialty.toLowerCase().includes('cardio')) {
+        terms.push('cœur', 'coeur', 'cardio');
+      } else if (doctor.specialty.toLowerCase().includes('pédiatre') || doctor.specialty.toLowerCase().includes('pediatre')) {
+        terms.push('enfant', 'enfants', 'bébé', 'bebe', 'zaza');
+      } else if (doctor.specialty.toLowerCase().includes('dentiste')) {
+        terms.push('dent', 'dents', 'nify');
+      } else if (doctor.specialty.toLowerCase().includes('gynéco') || doctor.specialty.toLowerCase().includes('gyneco')) {
+        terms.push('femme', 'gynéco', 'gyneco');
+      } else if (doctor.specialty.toLowerCase().includes('ophtalmo')) {
+        terms.push('yeux', 'maso', 'vue');
+      } else if (doctor.specialty.toLowerCase().includes('dermato')) {
+        terms.push('peau', 'hoditra');
+      }
+      
+      return terms;
+    }
+
+    // Fonction pour vérifier la disponibilité d'un créneau
+    function isTimeSlotAvailable(doctorEmail, date, time) {
+      // Vérifier les rendez-vous existants
+      const appointments = getAppointments();
+      const hasConflict = appointments.some(app => 
+        app.doctor.email === doctorEmail && 
+        app.date === date && 
+        app.time === time &&
+        app.status !== 'cancelled'
+      );
+      
+      if (hasConflict) return false;
+      
+      // Vérifier les disponibilités du médecin
+      const availabilities = getDoctorAvailabilities();
+      const dayOfWeek = new Date(date).toLocaleDateString('fr-FR', { weekday: 'long' }).toLowerCase();
+      
+      const doctorAvailability = availabilities.find(av => 
+        av.doctorEmail === doctorEmail && av.day.toLowerCase() === dayOfWeek
+      );
+      
+      if (!doctorAvailability) return false;
+      
+      return doctorAvailability.slots.includes(time);
+    }
+
+    // Fonction pour formater les médecins pour l'affichage
+    function formatDoctorsForDisplay(approvedDoctors) {
+      return approvedDoctors.map(doctor => {
+        // Vérifier les disponibilités du médecin
+        const availabilities = getDoctorAvailabilities();
+        const doctorAvailabilities = availabilities.filter(av => av.doctorEmail === doctor.email);
+        
+        let availabilityText = "Non disponible";
+        if (doctorAvailabilities.length > 0) {
+          const days = doctorAvailabilities.map(av => av.day.charAt(0).toUpperCase() + av.day.slice(1));
+          availabilityText = `Disponible: ${days.join(', ')}`;
+        }
+        
+        return {
+          name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
+          specialty: doctor.specialty,
+          availability: availabilityText,
+          searchTerms: generateSearchTerms(doctor),
+          doctorData: doctor, // Conserver les données originales
+          hasAvailability: doctorAvailabilities.length > 0
+        };
+      });
+    }
+
+    let currentDoctor = null;
+    let selectedDate = null;
 
     function searchDoctors() {
       const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -456,8 +562,20 @@
         return;
       }
       
+      // Récupérer les médecins validés
+      const approvedDoctors = getApprovedDoctors();
+      
+      if (approvedDoctors.length === 0) {
+        noResults.style.display = 'block';
+        resultsSection.style.display = 'none';
+        return;
+      }
+      
+      // Formater les médecins pour l'affichage
+      const displayDoctors = formatDoctorsForDisplay(approvedDoctors);
+      
       // Filtrer les médecins selon la recherche
-      const filteredDoctors = doctors.filter(doctor => 
+      const filteredDoctors = displayDoctors.filter(doctor => 
         doctor.searchTerms.some(term => term.includes(searchTerm)) ||
         doctor.name.toLowerCase().includes(searchTerm) ||
         doctor.specialty.toLowerCase().includes(searchTerm)
@@ -485,16 +603,25 @@
       filteredDoctors.forEach(doctor => {
         const doctorCard = document.createElement('div');
         doctorCard.className = 'doctor-card';
+        
+        let availabilityIcon = 'clock';
+        let availabilityClass = '';
+        
+        if (!doctor.hasAvailability) {
+          availabilityIcon = 'x-circle';
+          availabilityClass = 'no-availability';
+        }
+        
         doctorCard.innerHTML = `
           <h3 class="doctor-name">${doctor.name}</h3>
           <p class="doctor-specialty">${doctor.specialty}</p>
           <div class="doctor-info">
-            <span class="info-item"><i data-lucide="map-pin"></i> ${doctor.location}</span>
-            <span class="info-item"><i data-lucide="star"></i> ${doctor.rating}</span>
-            <span class="info-item"><i data-lucide="clock"></i> ${doctor.availability}</span>
+            <span class="info-item ${availabilityClass}"><i data-lucide="${availabilityIcon}"></i> ${doctor.availability}</span>
           </div>
-          <button class="book-btn" onclick="openBookingModal('${doctor.name}', '${doctor.specialty}')">
-            <i data-lucide="calendar"></i> PRENDRE RENDEZ-VOUS
+          <button class="book-btn" ${!doctor.hasAvailability ? 'disabled style="background: #6c757d; cursor: not-allowed;"' : ''} 
+            onclick="openBookingModal('${doctor.name}', '${doctor.specialty}', '${doctor.doctorData.email}')">
+            <i data-lucide="calendar"></i> 
+            ${doctor.hasAvailability ? 'PRENDRE RENDEZ-VOUS' : 'NON DISPONIBLE'}
           </button>
         `;
         resultsSection.appendChild(doctorCard);
@@ -504,44 +631,261 @@
       lucide.createIcons();
     }
 
-    function openBookingModal(doctorName, specialty) {
+    function openBookingModal(doctorName, specialty, doctorEmail) {
+      // Stocker les informations du médecin sélectionné
+      currentDoctor = {
+        name: doctorName,
+        specialty: specialty,
+        email: doctorEmail
+      };
+      
       document.getElementById('modalDoctorName').textContent = `Rendez-vous avec ${doctorName} - ${specialty}`;
       document.getElementById('bookingModal').style.display = 'flex';
+      
+      // Réinitialiser les champs
+      document.getElementById('appointmentTime').innerHTML = '<option value="">Sélectionnez une heure</option>';
+      document.getElementById('appointmentReason').value = '';
+      
+      // Masquer les messages d'erreur
+      document.getElementById('dateError').style.display = 'none';
+      document.getElementById('timeError').style.display = 'none';
+      document.getElementById('reasonError').style.display = 'none';
+      
+      // Générer le calendrier des disponibilités
+      generateAvailabilityCalendar(doctorEmail);
+    }
+
+    function generateAvailabilityCalendar(doctorEmail) {
+      const calendar = document.getElementById('availabilityCalendar');
+      calendar.innerHTML = '';
+      
+      // Ajouter les en-têtes de jours
+      const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+      days.forEach(day => {
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'calendar-header';
+        dayHeader.textContent = day;
+        calendar.appendChild(dayHeader);
+      });
+      
+      // Récupérer les disponibilités du médecin
+      const availabilities = getDoctorAvailabilities();
+      const doctorAvailabilities = availabilities.filter(av => av.doctorEmail === doctorEmail);
+      
+      // Créer un calendrier pour les 30 prochains jours
+      const today = new Date();
+      for (let i = 0; i < 30; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i);
+        
+        const dayOfWeek = date.toLocaleDateString('fr-FR', { weekday: 'long' }).toLowerCase();
+        const dateString = date.toISOString().split('T')[0];
+        const dayNumber = date.getDate();
+        
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        dayElement.textContent = dayNumber;
+        dayElement.setAttribute('data-date', dateString);
+        
+        // Vérifier si le médecin est disponible ce jour
+        const isAvailable = doctorAvailabilities.some(av => av.day.toLowerCase() === dayOfWeek);
+        
+        if (isAvailable) {
+          dayElement.classList.add('available');
+          dayElement.addEventListener('click', () => selectDate(dateString, dayElement));
+        } else {
+          dayElement.classList.add('unavailable');
+        }
+        
+        calendar.appendChild(dayElement);
+      }
+    }
+
+    function selectDate(date, element) {
+      selectedDate = date;
+      
+      // Mettre à jour la sélection visuelle
+      document.querySelectorAll('.calendar-day').forEach(day => {
+        day.classList.remove('selected');
+      });
+      element.classList.add('selected');
+      
+      // Mettre à jour les créneaux horaires disponibles
+      updateAvailableTimeSlots();
+    }
+
+    function updateAvailableTimeSlots() {
+      const timeSelect = document.getElementById('appointmentTime');
+      const dateError = document.getElementById('dateError');
+      
+      if (!selectedDate) {
+        timeSelect.innerHTML = '<option value="">Sélectionnez une heure</option>';
+        return;
+      }
+      
+      // Vérifier si la date est valide (aujourd'hui ou future)
+      const selectedDateObj = new Date(selectedDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (selectedDateObj < today) {
+        dateError.textContent = 'Veuillez sélectionner une date future';
+        dateError.style.display = 'block';
+        timeSelect.innerHTML = '<option value="">Sélectionnez une heure</option>';
+        return;
+      }
+      
+      dateError.style.display = 'none';
+      
+      // Récupérer les disponibilités du médecin pour ce jour de la semaine
+      const dayOfWeek = selectedDateObj.toLocaleDateString('fr-FR', { weekday: 'long' }).toLowerCase();
+      const availabilities = getDoctorAvailabilities();
+      const doctorAvailability = availabilities.find(av => 
+        av.doctorEmail === currentDoctor.email && av.day.toLowerCase() === dayOfWeek
+      );
+      
+      if (!doctorAvailability) {
+        timeSelect.innerHTML = '<option value="">Aucun créneau disponible</option>';
+        return;
+      }
+      
+      // Filtrer les créneaux déjà pris
+      const availableTimeSlots = doctorAvailability.slots.filter(time => 
+        isTimeSlotAvailable(currentDoctor.email, selectedDate, time)
+      );
+      
+      // Mettre à jour la liste déroulante des heures
+      timeSelect.innerHTML = '<option value="">Sélectionnez une heure</option>';
+      
+      if (availableTimeSlots.length === 0) {
+        timeSelect.innerHTML = '<option value="">Aucun créneau disponible</option>';
+      } else {
+        availableTimeSlots.forEach(time => {
+          const option = document.createElement('option');
+          option.value = time;
+          option.textContent = time;
+          timeSelect.appendChild(option);
+        });
+      }
     }
 
     function closeBookingModal() {
       document.getElementById('bookingModal').style.display = 'none';
       // Reset form
-      document.getElementById('appointmentDate').value = '';
       document.getElementById('appointmentTime').value = '';
       document.getElementById('appointmentReason').value = '';
+      currentDoctor = null;
+      selectedDate = null;
     }
 
     function confirmAppointment() {
-      const date = document.getElementById('appointmentDate').value;
       const time = document.getElementById('appointmentTime').value;
       const reason = document.getElementById('appointmentReason').value;
       
-      if (!date || !time || !reason) {
-        alert('Veuillez remplir tous les champs');
+      const dateError = document.getElementById('dateError');
+      const timeError = document.getElementById('timeError');
+      const reasonError = document.getElementById('reasonError');
+      const confirmBtn = document.getElementById('confirmBtn');
+      
+      // Réinitialiser les messages d'erreur
+      dateError.style.display = 'none';
+      timeError.style.display = 'none';
+      reasonError.style.display = 'none';
+      
+      let isValid = true;
+      
+      if (!selectedDate) {
+        dateError.textContent = 'Veuillez sélectionner une date';
+        dateError.style.display = 'block';
+        isValid = false;
+      }
+      
+      if (!time) {
+        timeError.textContent = 'Veuillez sélectionner une heure';
+        timeError.style.display = 'block';
+        isValid = false;
+      }
+      
+      if (!reason.trim()) {
+        reasonError.textContent = 'Veuillez saisir un motif';
+        reasonError.style.display = 'block';
+        isValid = false;
+      }
+      
+      if (!isValid) return;
+      
+      // Vérifier à nouveau la disponibilité (au cas où quelqu'un d'autre aurait pris le créneau)
+      if (!isTimeSlotAvailable(currentDoctor.email, selectedDate, time)) {
+        timeError.textContent = 'Ce créneau n\'est plus disponible';
+        timeError.style.display = 'block';
+        updateAvailableTimeSlots(); // Mettre à jour les créneaux disponibles
         return;
       }
       
-      // Simulation de prise de rendez-vous
-      alert(`✅ Rendez-vous confirmé !\n\nMédecin: ${document.getElementById('modalDoctorName').textContent}\nDate: ${date}\nHeure: ${time}\nMotif: ${reason}\n\nVous recevrez un rappel par email.`);
+      if (!currentDoctor) {
+        alert('Erreur: Médecin non sélectionné');
+        return;
+      }
       
-      closeBookingModal();
+      // Récupérer l'utilisateur connecté
+      const currentUserEmail = localStorage.getItem('currentUser');
+      if (!currentUserEmail) {
+        alert('Veuillez vous connecter pour prendre un rendez-vous');
+        window.location.href = 'auth.html?login=true';
+        return;
+      }
       
-      // Stocker le rendez-vous dans localStorage
-      const appointments = JSON.parse(localStorage.getItem('userAppointments') || '[]');
-      appointments.push({
-        doctor: document.getElementById('modalDoctorName').textContent,
-        date: date,
-        time: time,
-        reason: reason,
-        timestamp: new Date().toISOString()
-      });
-      localStorage.setItem('userAppointments', JSON.stringify(appointments));
+      // Récupérer les informations du patient
+      const userAccounts = JSON.parse(localStorage.getItem('userAccounts') || '[]');
+      const currentUser = userAccounts.find(user => user.email === currentUserEmail);
+      
+      if (!currentUser) {
+        alert('Erreur: Utilisateur non trouvé');
+        return;
+      }
+      
+      // Afficher un indicateur de chargement
+      const originalText = confirmBtn.textContent;
+      confirmBtn.innerHTML = '<div class="loading"></div>';
+      confirmBtn.disabled = true;
+      
+      // Simuler un délai de traitement
+      setTimeout(() => {
+        // Créer l'objet rendez-vous
+        const appointment = {
+          id: Date.now().toString(),
+          patient: {
+            firstName: currentUser.firstName,
+            lastName: currentUser.lastName,
+            email: currentUser.email,
+            phone: currentUser.phone
+          },
+          doctor: {
+            name: currentDoctor.name,
+            specialty: currentDoctor.specialty,
+            email: currentDoctor.email
+          },
+          date: selectedDate,
+          time: time,
+          reason: reason,
+          status: 'confirmed',
+          createdAt: new Date().toISOString()
+        };
+        
+        // Stocker le rendez-vous
+        const appointments = getAppointments();
+        appointments.push(appointment);
+        localStorage.setItem('appointments', JSON.stringify(appointments));
+        
+        // Restaurer le bouton de confirmation
+        confirmBtn.innerHTML = originalText;
+        confirmBtn.disabled = false;
+        
+        // Confirmation
+        alert(`✅ Rendez-vous confirmé !\n\nMédecin: ${currentDoctor.name}\nSpécialité: ${currentDoctor.specialty}\nDate: ${selectedDate}\nHeure: ${time}\nMotif: ${reason}\n\nVous recevrez un rappel par email.`);
+        
+        closeBookingModal();
+      }, 1000);
     }
 
     setTheme(localStorage.getItem("theme") || "dark");
