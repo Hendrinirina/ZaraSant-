@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Formations Gratuites</title>
+  <title>Mes documents</title>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     :root {
@@ -92,13 +92,13 @@
       background: var(--accent);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 30px;
       padding: 12px 24px;
       font-size: 0.95em;
       font-weight: 600;
       cursor: pointer;
       display: block;
-      margin: 0 auto;
+      margin: 30px auto 0;
       text-align: center;
       width: fit-content;
       transition: all 0.3s ease;
@@ -110,58 +110,61 @@
       background: #0088cc;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      margin-top: 30px;
-      display: inline-block;
     }
     
+    .document-icon {
+      margin: 30px auto;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--accent);
+    }
     
-.content {
-  text-align: center;
-  padding-top: 50px; /* Descend le texte */
-}
-
-.content ul {
-  display: inline-block;
-  text-align: left;
-  padding-left: 20px;
-}
-
-.content li {
-  list-style-position: outside; /* Aligne les puces verticalement */
-  margin-bottom: 8px;
-}
+    .description {
+      text-align: center;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    
+    hr {
+      border: 0;
+      height: 1px;
+      background: #333;
+      margin: 25px 0;
+    }
   </style>
 </head>
 <body>
   <header class="top-bar">
-    <div class="title">Support médical</div>
+    <div class="title">Mes documents</div>
     <div class="theme-toggle" id="themeToggle" title="Changer de thème">
       <i data-lucide="sun" id="themeIcon"></i>
     </div>
   </header>
 
-<div class="content" style="text-align: center; padding-top: 40px;">
-  <h1 style="margin-bottom: 20px;">
-  <h2 style="margin-bottom: 25px;">Demande médical</h2>
-  
-  <div style="display: inline-block; text-align: left; margin-bottom: 30px;">
-    <p><p>Communiquez directement avec votre professionnel de santé pour :</p>
-    <ul style="list-style: none; padding-left: 5px;">
-      <li style="margin-bottom: 10px;">✓ Obtenir des résultats d'examen</li>
-      <li style="margin-bottom: 10px;">✓ Demander un courrier d'adressage</li>
-      <li style="margin-bottom: 10px;">✓ Poser une question relative à votre suivi médical</li>
-    </ul>
+  <div class="content">
+    <div class="document-icon">
+      <i data-lucide="folder-open" width="80" height="80"></i>
+    </div>
+    
+    <h2 style="text-align: center; margin-bottom: 20px;">Gérez vos documents</h2>
+    
+    <div class="description">
+      <p>Accédez facilement à vos documents et partagez-les à tout moment avec vos soignants.</p>
+      <p>Vous seul pouvez accéder à ces documents, à moins que vous ne choisissiez de les partager avec vos soignants.</p>
+    </div>
+    
+    
+    <button class="connect-btn" onclick="window.location.href='se-connecter.html'">
+      SE CONNECTER
+    </button>
   </div>
-  
-  <button onclick="window.location.href='se-connecter.html'" 
-        style="background: var(--accent); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; margin-top: 20px; cursor: pointer;">
-  SE CONNECTER
-</button>
-</div>
 
   <nav class="bottom-nav">
     <a href="index.html"><i data-lucide="home"></i>Accueil</a>
-    <a href="formation.html"><i data-lucide="heart-pulse"></i>Support médical</a>
+    <a href="formation.html"><i data-lucide="folder-open"></i>Documents</a>
     <a href="choix-premium.html"><i data-lucide="calendar"></i>Rendez-vous</a>
     <a href="compte.html"><i data-lucide="user-round"></i>Compte</a>
   </nav>
