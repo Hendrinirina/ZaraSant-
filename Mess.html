@@ -82,6 +82,7 @@
             padding: 10px 16px;
             cursor: pointer;
             transition: background-color 0.2s;
+            border-bottom: 1px solid #f0f2f5;
         }
         
         .conversation:hover {
@@ -95,6 +96,12 @@
             background-color: #e4e6eb;
             margin-right: 12px;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #0084ff;
+            font-size: 20px;
         }
         
         .conversation-info {
@@ -120,6 +127,19 @@
             font-size: 12px;
             color: #65676b;
             margin-left: 8px;
+        }
+        
+        .notification-badge {
+            background-color: #0084ff;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
         }
         
         .no-results, .no-conversations {
@@ -207,29 +227,128 @@
         const noResults = document.getElementById('no-results');
         const noConversations = document.getElementById('no-conversations');
         const welcomeMessage = document.getElementById('welcome-message');
+        const conversationsList = document.getElementById('conversations-list');
         
-        // Récupérer le nom du médecin depuis localStorage
-        document.addEventListener('DOMContentLoaded', function() {
-            const medecinSelectionne = localStorage.getItem('medecinSelectionne');
+        // Fonction pour vérifier si une date est aujourd'hui
+        function isToday(dateString) {
+            const today = new Date();
+            const date = new Date(dateString);
+            return date.toDateString() === today.toDateString();
+        }
+        
+        // Fonction pour charger les conversations
+        function loadConversations() {
+            const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+            const currentUserEmail = localStorage.getItem('currentUser');
             
-            if (medecinSelectionne) {
-                welcomeMessage.textContent = `Conversation avec ${medecinSelectionne}`;
-                // Nettoyer le localStorage après utilisation
-                localStorage.removeItem('medecinSelectionne');
+            if (!currentUserEmail) {
+                noConversations.style.display = 'block';
+                return;
             }
-        });
-        
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase().trim();
             
-            if (searchTerm.length > 0) {
-                noConversations.style.display = 'none';
-                noResults.style.display = 'block';
-            } else {
+            // Filtrer les rendez-vous de l'utilisateur actuel qui sont aujourd'hui
+            const todayAppointments = appointments.filter(app => 
+                app.patient.email === currentUserEmail && 
+                isToday(app.date) &&
+                app.status !== 'cancelled'
+            );
+            
+            if (todayAppointments.length === 0) {
                 noConversations.style.display = 'block';
                 noResults.style.display = 'none';
+                return;
             }
+            
+            noConversations.style.display = 'none';
+            conversationsList.innerHTML = '';
+            
+            todayAppointments.forEach(appointment => {
+                const conversation = document.createElement('div');
+                conversation.className = 'conversation';
+                conversation.onclick = () => openConversation(appointment);
+                
+                conversation.innerHTML = `
+                    <div class="conversation-avatar">DR</div>
+                    <div class="conversation-info">
+                        <div class="conversation-name">${appointment.doctor.name}</div>
+                        <div class="conversation-preview">Consultation aujourd'hui à ${appointment.time}</div>
+                    </div>
+                    <div class="notification-badge">1</div>
+                `;
+                
+                conversationsList.appendChild(conversation);
+            });
+        }
+        
+        // Fonction pour ouvrir une conversation
+        function openConversation(appointment) {
+            // Stocker les informations de la consultation pour Mess2.html
+            localStorage.setItem('currentAppointment', JSON.stringify(appointment));
+            window.location.href = 'Mess2.html';
+        }
+        
+        // Vérifier si on vient d'une réservation réussie
+        function checkNewAppointment() {
+            const newAppointment = localStorage.getItem('newAppointmentCreated');
+            if (newAppointment === 'true') {
+                showToast('Rendez-vous confirmé ! Une conversation sera disponible le jour de votre consultation.');
+                localStorage.removeItem('newAppointmentCreated');
+            }
+        }
+        
+        // Fonction pour afficher des notifications
+        function showToast(message) {
+            // Créer un élément toast temporaire
+            const toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.top = '20px';
+            toast.style.right = '20px';
+            toast.style.background = '#0084ff';
+            toast.style.color = 'white';
+            toast.style.padding = '12px 20px';
+            toast.style.borderRadius = '8px';
+            toast.style.zIndex = '1000';
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 3000);
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConversations();
+            checkNewAppointment();
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const conversations = document.querySelectorAll('.conversation');
+                let hasVisible = false;
+                
+                conversations.forEach(conv => {
+                    const name = conv.querySelector('.conversation-name').textContent.toLowerCase();
+                    if (name.includes(searchTerm)) {
+                        conv.style.display = 'flex';
+                        hasVisible = true;
+                    } else {
+                        conv.style.display = 'none';
+                    }
+                });
+                
+                if (searchTerm.length > 0) {
+                    noConversations.style.display = 'none';
+                    noResults.style.display = hasVisible ? 'none' : 'block';
+                } else {
+                    noResults.style.display = 'none';
+                    noConversations.style.display = conversations.length === 0 ? 'block' : 'none';
+                }
+            });
         });
+        
+        // Vérifier périodiquement les nouvelles conversations
+        setInterval(loadConversations, 30000); // Toutes les 30 secondes
     </script>
 </body>
 </html>
