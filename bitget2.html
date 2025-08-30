@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ZaraSanté</title>
+  <title>Docteur OI</title>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <style>
@@ -287,7 +287,7 @@
 .floating-buttons {
   position: fixed;
   left: 20px;
-  bottom: 150px;
+  bottom: 100px;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -321,7 +321,7 @@
 <body>
   <header class="top-bar">
   <div class="top-left">
-    <div class="title">ZaraSanté</div>
+    <div class="title">Docteurs O.I</div>
   </div>
 
   <div class="top-right">
@@ -335,16 +335,16 @@
       <h2>Votre santé est notre priorité </h2>
       <p>Aucune inquiétude ! Nous somme votre compagnon de santé le plus proche au quotidien  </p>
       <div class="button-group">
-        <a href="formation2.html" class="btn">Support médical</a>
+        <a href="formation2.html" class="btn">Mes docs</a>
         <a href="choix-premium2.html" class="btn premium">Rendez-vous</a>
         <a href="maintenance.html" class="btn event">Médecin recommandés</a>
       </div>
     </div>
 
     <div class="about">
-      <h3>Bienvenue sur ZaraSanté</h3>
+      <h3>Bienvenue dans <br>Docteurs O.I</h3>
       <p>
-        Votre santé, à portée de main. Avec <span class="highlight">ZaraSanté</span>, prenez <strong>rendez-vous</strong> avec un médecin<strong> en quelques clics</strong>, plus besoin de se déplacer ou d'attendre des heures.<br><br>
+        Votre santé, à portée de main. Avec <span class="highlight">Docteurs O.I</span>, prenez <strong>rendez-vous</strong> avec un médecin<strong> en quelques clics</strong>, plus besoin de se déplacer ou d'attendre des heures.<br><br>
          Des <strong>médecins</strong> qualifiés et disponibles, des <strong>rendez-vous</strong> rapides et simples à réserver <br>
 	 Réglez facilement par <strong>Mobile Money</strong> et consultez votre médecin directement en <strong>visioconférence.</strong> <br><br>
 
@@ -355,7 +355,7 @@
     <div class="warning">
       <h3>Beaucoup de personnes n'ont pas le temps d'attendre dans une longue file d'attente</h3>
       <p>
-     Tant de personnes ont besoin d'une application qui leurs facilite la vie, c'est pour cela que <span class="highlight">ZaraSanté</span> est là ! Elle rend la possibilité aux soins à distance.<br><br>
+     Tant de personnes ont besoin d'une application qui leurs facilite la vie, c'est pour cela que <span class="highlight">Docteurs O.I</span> est là ! Elle rend la possibilité aux soins à distance.<br><br>
      <strong>Simple, efficace mais aussi plus rapide</strong>
       </p>
     </div>
@@ -390,27 +390,10 @@
 
   <nav class="bottom-nav">
     <a href="bitget2.html"><i data-lucide="home"></i>Accueil</a>
-    <a href="formation2.html"><i data-lucide="heart-pulse"></i>Support médical</a>
+    <a href="formation2.html"><i data-lucide="folder-open"></i>Documents</a>
     <a href="choix-premium2.html"><i data-lucide="calendar"></i>Rendez-vous</a>
     <a href="compte2.html"><i data-lucide="user-round"></i>Compte</a>
   </nav>
-
-  <!-- Partenariat bouton + popup -->
-  <button id="partnerBtn">Vous êtes médecin ?</button>
-  <div id="partnerPopup">
-    <h3>Bienvenue à toi ! Nous sommes ZaraSanté.</h3>
-    <p>Vous pensez que vos services peuvent nous aider ? En tant que médecin, veuillez remplir ce formulaire pour postuler:</p> <br> <strong>(Cette page est réservée uniquement aux médecins)</strong>
-    
-    <input type="text" id="doctorNom" placeholder="Nom *" required>
-    <input type="text" id="doctorPrenom" placeholder="Prénom *" required>
-    <input type="email" id="doctorEmail" placeholder="Email *" required>
-    <input type="tel" id="doctorPhone" placeholder="Téléphone *" required>
-    <input type="text" id="doctorSpecialite" placeholder="Spécialité *" required>
-    <textarea id="doctorMotivation" rows="4" placeholder="Motivation (100 mots max) *" required></textarea>
-    
-    <button onclick="sendDoctorApplication()" style="background:#007bff;">Envoyer</button>
-    <button onclick="closePartner()" style="background:gray;">Fermer</button>
-  </div>
 
   <script>
     lucide.createIcons();
@@ -431,52 +414,6 @@
     });
 
     setTheme(localStorage.getItem("theme") || "dark");
-
-    // Gestion du bouton partenariat
-    const partnerBtn = document.getElementById("partnerBtn");
-    const partnerPopup = document.getElementById("partnerPopup");
-
-    partnerBtn.onclick = () => partnerPopup.style.display = "block";
-    function closePartner() {
-      partnerPopup.style.display = "none";
-    }
-
-    // Nouvelle fonction pour gérer l'envoi de la candidature médecin
-    function sendDoctorApplication() {
-      const nom = document.getElementById("doctorNom").value.trim();
-      const prenom = document.getElementById("doctorPrenom").value.trim();
-      const email = document.getElementById("doctorEmail").value.trim();
-      const phone = document.getElementById("doctorPhone").value.trim();
-      const specialite = document.getElementById("doctorSpecialite").value.trim();
-      const motivation = document.getElementById("doctorMotivation").value.trim();
-
-      if (!nom || !prenom || !email || !phone || !specialite || !motivation) {
-        alert("Veuillez remplir tous les champs obligatoires (*)");
-        return;
-      }
-
-      const applicationData = {
-        nom, prenom, email, phone, specialite, motivation,
-        timestamp: new Date().toISOString()
-      };
-
-      // Stockage dans localStorage
-      let applications = JSON.parse(localStorage.getItem('doctorApplications') || '[]');
-      applications.push(applicationData);
-      localStorage.setItem('doctorApplications', JSON.stringify(applications));
-
-      // Notification admin
-      let notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-      notifications.push({
-        type: "new_application",
-        message: `Nouvelle candidature de ${prenom} ${nom}`,
-        timestamp: new Date().toISOString()
-      });
-      localStorage.setItem('adminNotifications', JSON.stringify(notifications));
-
-      alert("Merci ! Nous vous contacterons sous 5 jours. Préparez votre diplôme et pièce d'identité pour l'entretien.");
-      closePartner();
-    }
   </script>
 </body>
 </html>
