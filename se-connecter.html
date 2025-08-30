@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion - ZaraSanté</title>
+  <title>Connexion - Docteurs O.I</title>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     :root {
@@ -14,6 +14,7 @@
       --input-bg: #f0f4f8;
       --border-color: #dbe1e8;
       --error-color: #e74c3c;
+      --doctor-color: #28a745;
     }
 
     body {
@@ -25,10 +26,10 @@
     }
 
     .auth-container {
-      max-width: 290px;
+      max-width: 320px;
       margin: 30px auto;
       background: var(--card-bg);
-      padding: 20px;
+      padding: 25px;
       border-radius: 12px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     }
@@ -47,6 +48,35 @@
     .auth-header p {
       color: #666;
       font-size: 0.9em;
+    }
+
+    .user-type-selector {
+      display: flex;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .user-type-btn {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      background: var(--input-bg);
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 500;
+    }
+
+    .user-type-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .user-type-btn.doctor-active {
+      background: var(--doctor-color);
+      color: white;
     }
 
     .form-group {
@@ -122,6 +152,10 @@
       margin-top: 10px;
     }
 
+    .btn-doctor {
+      background: var(--doctor-color);
+    }
+
     .btn:hover {
       opacity: 0.9;
       transform: translateY(-2px);
@@ -150,6 +184,16 @@
       display: none;
     }
 
+    .doctor-info {
+      background: rgba(40, 167, 69, 0.1);
+      border: 1px solid var(--doctor-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 15px;
+      font-size: 0.85em;
+      display: none;
+    }
+
     @media (max-width: 480px) {
       .auth-container {
         margin: 20px auto;
@@ -172,19 +216,28 @@
   <div class="auth-container">
     <div class="auth-header">
       <h1>Se connecter</h1>
-      <p>Accédez à votre espace <strong>ZaraSanté</strong></p>
+      <p>Accédez à votre espace <strong>Docteurs O.I</strong></p>
+    </div>
+
+    <div class="user-type-selector">
+      <button class="user-type-btn active" id="patientBtn" onclick="setUserType('patient')">Patient</button>
+      <button class="user-type-btn" id="doctorBtn" onclick="setUserType('doctor')">Médecin</button>
+    </div>
+
+    <div class="doctor-info" id="doctorInfo">
+      <strong>Information :</strong> Utilisez les identifiants qui vous ont été fournis par l'administration (nom d'utilisateur et mot de passe générés).
     </div>
 
     <form id="loginForm">
       <div class="form-group">
-        <label for="loginEmail">Adresse email</label>
-        <input type="email" id="loginEmail" required>
+        <label for="loginEmail" id="emailLabel">Adresse email</label>
+        <input type="text" id="loginEmail" required placeholder="Votre adresse email">
         <div class="error-message" id="emailError">Email invalide</div>
       </div>
 
       <div class="form-group">
         <label for="loginPassword">Mot de passe</label>
-        <input type="password" id="loginPassword" required>
+        <input type="password" id="loginPassword" required placeholder="Votre mot de passe">
         <button type="button" class="password-toggle" id="passwordToggle">
           <i data-lucide="eye"></i>
         </button>
@@ -196,7 +249,7 @@
         <label for="rememberMe">Se souvenir de moi</label>
       </div>
 
-      <button type="submit" class="btn">Se connecter</button>
+      <button type="submit" class="btn" id="submitBtn">Se connecter</button>
     </form>
 
     <div class="register-link">
@@ -208,6 +261,38 @@
   <script>
     // Initialisation des icônes
     lucide.createIcons();
+
+    let userType = 'patient';
+
+    // Définir le type d'utilisateur
+    function setUserType(type) {
+      userType = type;
+      const patientBtn = document.getElementById('patientBtn');
+      const doctorBtn = document.getElementById('doctorBtn');
+      const emailLabel = document.getElementById('emailLabel');
+      const emailInput = document.getElementById('loginEmail');
+      const doctorInfo = document.getElementById('doctorInfo');
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (type === 'patient') {
+        patientBtn.classList.add('active');
+        patientBtn.classList.remove('doctor-active');
+        doctorBtn.classList.remove('active');
+        doctorBtn.classList.remove('doctor-active');
+        emailLabel.textContent = 'Adresse email';
+        emailInput.placeholder = 'Votre adresse email';
+        doctorInfo.style.display = 'none';
+        submitBtn.classList.remove('btn-doctor');
+      } else {
+        patientBtn.classList.remove('active');
+        doctorBtn.classList.add('active');
+        doctorBtn.classList.add('doctor-active');
+        emailLabel.textContent = 'Nom d\'utilisateur';
+        emailInput.placeholder = 'Votre nom d\'utilisateur';
+        doctorInfo.style.display = 'block';
+        submitBtn.classList.add('btn-doctor');
+      }
+    }
 
     // Gestion de l'icône œil pour le mot de passe
     const passwordToggle = document.getElementById('passwordToggle');
@@ -237,49 +322,103 @@
       document.getElementById('passwordError').style.display = 'none';
 
       // Récupération des valeurs
-      const email = document.getElementById('loginEmail').value.trim();
+      const identifier = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPassword').value.trim();
       const rememberMe = document.getElementById('rememberMe').checked;
 
-      // Validation basique
-      if (!email.includes('@') || !email.includes('.')) {
-        document.getElementById('emailError').style.display = 'block';
-        return;
-      }
-
-      if (password.length < 6) {
-        document.getElementById('passwordError').style.display = 'block';
-        return;
-      }
-
-      // Vérification dans userAccounts
-      const userAccounts = JSON.parse(localStorage.getItem('userAccounts') || '[]');
-      const user = userAccounts.find(user => user.email === email && user.password === password);
-      
-      if (user) {
-        // Connexion réussie
-        localStorage.setItem('currentUser', user.email);
-        
-        if (rememberMe) {
-          localStorage.setItem('rememberMe', 'true');
-        } else {
-          localStorage.removeItem('rememberMe');
+      if (userType === 'patient') {
+        // Validation pour les patients
+        if (!identifier.includes('@') || !identifier.includes('.')) {
+          document.getElementById('emailError').textContent = 'Email invalide';
+          document.getElementById('emailError').style.display = 'block';
+          return;
         }
+
+        if (password.length < 6) {
+          document.getElementById('passwordError').textContent = 'Mot de passe incorrect';
+          document.getElementById('passwordError').style.display = 'block';
+          return;
+        }
+
+        // Vérification dans userAccounts
+        const userAccounts = JSON.parse(localStorage.getItem('userAccounts') || '[]');
+        const user = userAccounts.find(user => user.email === identifier && user.password === password);
         
-        alert('Connexion réussie !');
-        window.location.href = 'bitget2.html';
+        if (user) {
+          // Connexion réussie
+          localStorage.setItem('currentUser', user.email);
+          localStorage.setItem('userType', 'patient');
+          
+          if (rememberMe) {
+            localStorage.setItem('rememberMe', 'true');
+          } else {
+            localStorage.removeItem('rememberMe');
+          }
+          
+          alert('Connexion réussie !');
+          window.location.href = 'bitget2.html';
+        } else {
+          document.getElementById('passwordError').textContent = 'Email ou mot de passe incorrect';
+          document.getElementById('passwordError').style.display = 'block';
+        }
       } else {
-        document.getElementById('passwordError').style.display = 'block';
-        alert('Email ou mot de passe incorrect');
+        // Validation pour les médecins
+        if (!identifier) {
+          document.getElementById('emailError').textContent = 'Nom d\'utilisateur requis';
+          document.getElementById('emailError').style.display = 'block';
+          return;
+        }
+
+        if (password.length < 6) {
+          document.getElementById('passwordError').textContent = 'Mot de passe incorrect';
+          document.getElementById('passwordError').style.display = 'block';
+          return;
+        }
+
+        // Vérification dans approvedDoctors
+        const approvedDoctors = JSON.parse(localStorage.getItem('approvedDoctors') || '[]');
+        const doctor = approvedDoctors.find(doctor => 
+          doctor.username === identifier && doctor.password === password
+        );
+        
+        if (doctor) {
+          // Connexion réussie
+          localStorage.setItem('currentDoctorUsername', doctor.username);
+          localStorage.setItem('userType', 'doctor');
+          
+          if (rememberMe) {
+            localStorage.setItem('rememberMe', 'true');
+          } else {
+            localStorage.removeItem('rememberMe');
+          }
+          
+          alert('Connexion réussie !');
+          // CORRECTION ICI : Redirection vers medecin.html au lieu de rester sur la page
+          window.location.href = 'médecin.html';
+        } else {
+          document.getElementById('passwordError').textContent = 'Identifiant ou mot de passe incorrect';
+          document.getElementById('passwordError').style.display = 'block';
+        }
       }
     });
 
     // Pré-remplissage si "Se souvenir de moi"
     if (localStorage.getItem('rememberMe') === 'true') {
-      const currentUserEmail = localStorage.getItem('currentUser');
-      if (currentUserEmail) {
-        document.getElementById('loginEmail').value = currentUserEmail;
-        document.getElementById('rememberMe').checked = true;
+      const userType = localStorage.getItem('userType');
+      if (userType === 'patient') {
+        const currentUserEmail = localStorage.getItem('currentUser');
+        if (currentUserEmail) {
+          document.getElementById('loginEmail').value = currentUserEmail;
+          document.getElementById('rememberMe').checked = true;
+          setUserType('patient');
+        }
+      } else if (userType === 'doctor') {
+        const currentDoctorUsername = localStorage.getItem('currentDoctorUsername');
+        if (currentDoctorUsername) {
+          document.getElementById('loginEmail').value = currentDoctorUsername;
+          document.getElementById('rememberMe').checked = true;
+          setUserType('doctor');
+        }
       }
     }
   </script>
