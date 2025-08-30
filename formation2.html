@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Recherche Médecin</title>
+  <title>Mes documents</title>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     :root {
       --bg-color: #0f0f0f;
       --text-color: white;
       --card-bg: #1e1e1e;
-      --accent: #00c3ff;
+      --accent: #00f0ff;
       --lock-color: #555;
       --success: #28a745;
     }
@@ -30,6 +30,14 @@
       background: var(--bg-color);
       color: var(--text-color);
       transition: 0.3s ease;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    body {
+      touch-action: manipulation;
     }
 
     .top-bar {
@@ -55,6 +63,7 @@
       padding: 20px;
       max-width: 600px;
       margin: auto;
+      padding-bottom: 80px;
     }
     
     .bottom-nav {
@@ -89,234 +98,280 @@
       margin-bottom: 3px;
       stroke-width: 2;
     }
-
-    /* Nouveaux styles pour la recherche */
-    .search-container {
-      background: var(--card-bg);
-      padding: 25px;
-      border-radius: 16px;
-      margin: 20px 0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .search-title {
+    
+    .document-icon {
+      margin: 30px auto 20px;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       color: var(--accent);
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 1.4em;
     }
-
-    .search-input {
-      width: 100%;
-      padding: 12px 15px;
-      border-radius: 12px;
-      border: 1px solid #555;
-      background: var(--card-bg);
-      color: var(--text-color);
-      font-size: 1em;
-      margin-bottom: 20px;
-      box-sizing: border-box;
-    }
-
-    .search-btn {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 25px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      font-size: 1em;
-      transition: 0.3s ease;
-    }
-
-    .search-btn:hover {
-      background: #0088cc;
-      transform: translateY(-2px);
-    }
-
-    .results-section {
-      display: none;
-      margin-top: 20px;
-    }
-
-    .doctor-card {
+    
+    .upload-section {
       background: var(--card-bg);
       padding: 20px;
       border-radius: 12px;
-      margin-bottom: 15px;
-      border-left: 4px solid var(--accent);
+      margin: 20px 0;
+      text-align: center;
     }
-
-    .doctor-name {
+    
+    .upload-title {
       color: var(--accent);
-      margin: 0 0 10px 0;
-      font-size: 1.2em;
-    }
-
-    .doctor-specialty {
-      color: #aaa;
-      margin: 0 0 15px 0;
-      font-size: 0.9em;
-    }
-
-    .doctor-info {
-      display: flex;
-      justify-content: space-between;
       margin-bottom: 15px;
-      flex-wrap: wrap;
-      gap: 10px;
+      font-size: 1.2em;
+      font-weight: 600;
     }
-
-    .info-item {
+    
+    .upload-options {
       display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.9em;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
     }
-
-    .chat-btn {
-      background: var(--success);
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      transition: 0.3s ease;
+    
+    .upload-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
+      padding: 12px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      font-weight: 500;
     }
-
-    .chat-btn:hover {
-      background: #218838;
+    
+    .upload-btn:hover {
+      background: #0088cc;
     }
-
-    .info-section {
+    
+    #fileInput {
+      display: none;
+    }
+    
+    hr {
+      border: 0;
+      height: 1px;
+      background: #333;
+      margin: 25px 0;
+    }
+    
+    .documents-section {
       margin-top: 30px;
-      padding: 20px;
-      background: var(--card-bg);
-      border-radius: 16px;
     }
-
-    .info-title {
+    
+    .documents-title {
       color: var(--accent);
       margin-bottom: 15px;
+      font-size: 1.2em;
+      font-weight: 600;
     }
-
-    .specialty-list {
-      columns: 2;
-      column-gap: 20px;
+    
+    .document-item {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
-
-    .specialty-item {
-      margin-bottom: 10px;
-      padding-left: 20px;
-      position: relative;
-      break-inside: avoid;
+    
+    .document-item:hover {
+      background: #2a2a2a;
+      transform: translateY(-2px);
     }
-
-    .specialty-item:before {
-      content: "•";
+    
+    .document-icon-small {
       color: var(--accent);
-      position: absolute;
-      left: 0;
-      font-weight: bold;
+      flex-shrink: 0;
     }
-
-    .no-results {
+    
+    .document-info {
+      flex-grow: 1;
+      min-width: 0;
+    }
+    
+    .document-name {
+      margin: 0 0 5px 0;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .document-details {
+      margin: 0;
+      font-size: 0.8em;
+      color: #aaa;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .document-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    
+    .action-btn {
+      background: none;
+      border: none;
+      color: #aaa;
+      cursor: pointer;
+      transition: 0.3s ease;
+      padding: 5px;
+    }
+    
+    .action-btn:hover {
+      color: var(--accent);
+    }
+    
+    .empty-state {
       text-align: center;
       color: #aaa;
-      padding: 40px 0;
+      padding: 30px 0;
     }
-
-    @media (max-width: 600px) {
-      .specialty-list {
-        columns: 1;
-      }
-      
-      .doctor-info {
-        flex-direction: column;
-        gap: 8px;
-      }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 80%;
+      overflow: auto;
+      position: relative;
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    
+    .modal-body {
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    .modal-body img {
+      max-width: 100%;
+      max-height: 60vh;
+      border-radius: 8px;
+    }
+    
+    .modal-body iframe {
+      width: 100%;
+      height: 60vh;
+      border: none;
+      border-radius: 8px;
+    }
+    
+    .cannot-preview {
+      text-align: center;
+      padding: 20px;
+      color: #aaa;
+    }
+    
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+    
+    body {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    body {
+      -webkit-tap-highlight-color: transparent;
     }
   </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
   <header class="top-bar">
-    <div class="title">Support médical</div>
+    <div class="title">Mes documents</div>
     <div class="theme-toggle" id="themeToggle" title="Changer de thème">
       <i data-lucide="sun" id="themeIcon"></i>
     </div>
   </header>
 
   <div class="content">
-    <div class="search-container">
-      <h2 class="search-title">Trouvez le médecin dont vous avez besoin</h2>
+    <div class="document-icon">
+      <i data-lucide="folder-open" width="80" height="80"></i>
+    </div>
+    
+    <div class="upload-section">
+      <h2 class="upload-title">Importer un document</h2>
       
-      <input type="text" class="search-input" id="searchInput" placeholder="Nom du médecin ou spécialité...">
-      
-      <button class="search-btn" onclick="rechercherMedecin()">
-        <i data-lucide="search"></i> RECHERCHER
-      </button>
-    </div>
-
-    <div class="results-section" id="resultsSection">
-      <!-- Les résultats seront générés ici dynamiquement -->
-    </div>
-
-    <div class="no-results" id="noResults">
-      <i data-lucide="search" width="48" height="48"></i>
-      <p>Utilisez la recherche pour trouver des médecins</p>
-      <p>Recherchez par nom ou spécialité médicale</p>
-    </div>
-
-    <div class="no-results" id="noNameResults" style="display: none;">
-      <i data-lucide="user-x" width="48" height="48"></i>
-      <p>Aucun médecin ne porte ce nom</p>
-      <p>Vérifiez l'orthographe ou essayez une autre recherche</p>
-    </div>
-
-    <div class="no-results" id="noSpecialtyResults" style="display: none;">
-      <i data-lucide="stethoscope" width="48" height="48"></i>
-      <p>Spécialité non trouvée</p>
-      <p>Cette spécialité n'est pas encore disponible sur notre plateforme</p>
-    </div>
-
-    <div class="info-section">
-      <h3 class="info-title">Les grands types de médecins</h3>
-      
-      <h4>1. Médecin généraliste</h4>
-      <p>Le premier médecin que vous consultez, il soigne les problèmes courants et vous oriente vers des spécialistes si nécessaire.</p>
-      
-      <h4>2. Médecins spécialistes</h4>
-      <div class="specialty-list">
-        <div class="specialty-item">Cardiologue → Cœur et circulation sanguine</div>
-        <div class="specialty-item">Pneumologue → Poumons et respiration</div>
-        <div class="specialty-item">Neurologue → Cerveau et système nerveux</div>
-        <div class="specialty-item">Psychiatre → Santé mentale</div>
-        <div class="specialty-item">Dermatologue → Peau</div>
-        <div class="specialty-item">Gastro-entérologue → Estomac et intestins</div>
-        <div class="specialty-item">Pédiatre → Enfants</div>
-        <div class="specialty-item">Gynécologue → Santé féminine</div>
-        <div class="specialty-item">Ophtalmologiste → Yeux et vision</div>
-        <div class="specialty-item">ORL → Oreilles, nez, gorge</div>
-        <div class="specialty-item">Dentiste → Dents et bouche</div>
-        <div class="specialty-item">Chirurgien → Opérations</div>
+      <div class="upload-options">
+        <input type="file" id="fileInput" accept="image/*,.pdf,.doc,.docx,.txt">
+        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+          <i data-lucide="upload"></i> Choisir un fichier
+        </button>
       </div>
-      
-      <h4>3. Autres spécialités</h4>
-      <p>Oncologue (cancer), Radiologue (imagerie médicale), Urgentiste, Médecin du travail, et bien d'autres.</p>
+    </div>
+    
+    <hr>
+    
+    <div class="documents-section">
+      <h2 class="documents-title">Mes documents</h2>
+      <div id="documentsContainer">
+        <div class="empty-state" id="emptyState">
+          <i data-lucide="folder-open" width="48" height="48"></i>
+          <p>Aucun document pour le moment</p>
+          <p>Importez votre premier document</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="documentModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div class="modal-body" id="modalBody">
+        <!-- Le contenu du document sera inséré ici -->
+      </div>
     </div>
   </div>
 
   <nav class="bottom-nav">
     <a href="bitget2.html"><i data-lucide="home"></i>Accueil</a>
-    <a href="formation2.html"><i data-lucide="heart-pulse"></i>Support médical</a>
+    <a href="formation2.html"><i data-lucide="folder-open"></i>Documents</a>
     <a href="choix-premium2.html"><i data-lucide="calendar"></i>Rendez-vous</a>
     <a href="compte2.html"><i data-lucide="user-round"></i>Compte</a>
   </nav>
@@ -339,168 +394,298 @@
       setTheme(currentTheme);
     });
 
-    // Base de données simulée de médecins Malagasy
-    const doctors = [
-      {
-        name: "Dr. Andrianavalona Rakoto",
-        specialty: "cardiologue",
-        specialtyName: "Cardiologue",
-        location: "Analakely, Antananarivo",
-        rating: "4.8/5 (124 avis)",
-        availability: "Disponible demain",
-        searchTerms: ["andrianavalona", "rakoto", "cardiologue", "cœur", "cardio"]
-      },
-      {
-        name: "Dr. Nirina Rasoanaivo",
-        specialty: "generaliste",
-        specialtyName: "Médecin généraliste",
-        location: "Mahamasina, Antananarivo",
-        rating: "4.6/5 (89 avis)",
-        availability: "Disponible aujourd'hui",
-        searchTerms: ["nirina", "rasoanaivo", "généraliste", "generaliste", "médecin", "medecin"]
-      },
-      {
-        name: "Dr. Hanta Randriamampionona",
-        specialty: "pediatre",
-        specialtyName: "Pédiatre",
-        location: "Isoraka, Antananarivo",
-        rating: "4.9/5 (156 avis)",
-        availability: "Disponible cette semaine",
-        searchTerms: ["hanta", "randriamampionona", "pédiatre", "pediatre", "enfant", "enfants"]
-      },
-      {
-        name: "Dr. Tiana Rajaonarison",
-        specialty: "dentiste",
-        specialtyName: "Dentiste",
-        location: "Ambatonakanga, Antananarivo",
-        rating: "4.7/5 (98 avis)",
-        availability: "Disponible vendredi",
-        searchTerms: ["tiana", "rajaonarison", "dentiste", "dent", "dents", "dentaire"]
-      },
-      {
-        name: "Dr. Fenohery Andriamalala",
-        specialty: "gynecologue",
-        specialtyName: "Gynécologue",
-        location: "Ankorondrano, Antananarivo",
-        rating: "4.8/5 (112 avis)",
-        availability: "Disponible lundi",
-        searchTerms: ["fenohery", "andriamalala", "gynécologue", "gynecologue", "femme", "gynéco"]
-      },
-      {
-        name: "Dr. Solohery Ramaroson",
-        specialty: "ophtalmo",
-        specialtyName: "Ophtalmologiste",
-        location: "Antsahavola, Antananarivo",
-        rating: "4.5/5 (76 avis)",
-        availability: "Disponible mercredi",
-        searchTerms: ["solohery", "ramaroson", "ophtalmologiste", "ophtalmo", "yeux", "vision"]
-      },
-      {
-        name: "Dr. Lova Ratsimbazafy",
-        specialty: "dermatologue",
-        specialtyName: "Dermatologue",
-        location: "Faravohitra, Antananarivo",
-        rating: "4.7/5 (103 avis)",
-        availability: "Disponible jeudi",
-        searchTerms: ["lova", "ratsimbazafy", "dermatologue", "peau", "dermato"]
-      },
-      {
-        name: "Dr. Mialy Razafindrakoto",
-        specialty: "dentiste",
-        specialtyName: "Dentiste",
-        location: "Antanimena, Antananarivo",
-        rating: "4.9/5 (87 avis)",
-        availability: "Disponible mardi",
-        searchTerms: ["mialy", "razafindrakoto", "dentiste", "dent", "dents", "dentaire"]
-      },
-      {
-        name: "Dr. Toky Rabemananjara",
-        specialty: "dentiste",
-        specialtyName: "Dentiste",
-        location: "Andraharo, Antananarivo",
-        rating: "4.6/5 (92 avis)",
-        availability: "Disponible jeudi",
-        searchTerms: ["toky", "rabemananjara", "dentiste", "dent", "dents", "dentaire"]
-      }
-    ];
-
     const savedTheme = localStorage.getItem("theme") || "dark";
     setTheme(savedTheme);
-    lucide.createIcons();
-
-    function rechercherMedecin() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-      const resultsSection = document.getElementById('resultsSection');
-      const noResults = document.getElementById('noResults');
-      const noNameResults = document.getElementById('noNameResults');
-      const noSpecialtyResults = document.getElementById('noSpecialtyResults');
-      
-      // Masquer tous les messages d'erreur d'abord
-      noResults.style.display = 'none';
-      noNameResults.style.display = 'none';
-      noSpecialtyResults.style.display = 'none';
-      
-      if (searchTerm === '') {
-        noResults.style.display = 'block';
-        resultsSection.style.display = 'none';
-        return;
+    
+    // Gestion des fichiers
+    const fileInput = document.getElementById('fileInput');
+    const documentsContainer = document.getElementById('documentsContainer');
+    const emptyState = document.getElementById('emptyState');
+    const modal = document.getElementById('documentModal');
+    const modalBody = document.getElementById('modalBody');
+    
+    // Empêcher les captures d'écran
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'PrintScreen') {
+        e.preventDefault();
+        return false;
       }
       
-      // Filtrer les médecins selon la recherche
-      const filteredDoctors = doctors.filter(doctor => 
-        doctor.searchTerms.some(term => term.includes(searchTerm)) ||
-        doctor.name.toLowerCase().includes(searchTerm) ||
-        doctor.specialtyName.toLowerCase().includes(searchTerm)
-      );
-      
-      if (filteredDoctors.length === 0) {
-        resultsSection.style.display = 'none';
-        
-        // Déterminer le type d'erreur
-        const isNameSearch = /^[a-zéèêëàâäôöûüç\s]+$/i.test(searchTerm);
-        const isSpecialtySearch = !isNameSearch || searchTerm.length > 3;
-        
-        if (isNameSearch) {
-          noNameResults.style.display = 'block';
-        } else {
-          noSpecialtyResults.style.display = 'block';
-        }
-        return;
+      if ((e.ctrlKey && e.key === 'p') || (e.altKey && e.key === 'PrintScreen')) {
+        e.preventDefault();
+        return false;
       }
-      
-      // Afficher les résultats
-      resultsSection.innerHTML = '';
-      resultsSection.style.display = 'block';
-      
-      filteredDoctors.forEach(doctor => {
-        const doctorCard = document.createElement('div');
-        doctorCard.className = 'doctor-card';
-        doctorCard.innerHTML = `
-          <h3 class="doctor-name">${doctor.name}</h3>
-          <p class="doctor-specialty">${doctor.specialtyName}</p>
-          <div class="doctor-info">
-            <span class="info-item"><i data-lucide="map-pin"></i> ${doctor.location}</span>
-            <span class="info-item"><i data-lucide="star"></i> ${doctor.rating}</span>
-            <span class="info-item"><i data-lucide="clock"></i> ${doctor.availability}</span>
-          </div>
-          <button class="chat-btn" onclick="discuterAvecMedecin('${doctor.name}')">
-            <i data-lucide="message-circle"></i> DISCUTER AVEC CE MÉDECIN
-          </button>
+    });
+    
+    // Fonction pour obtenir la clé spécifique à l'utilisateur
+    function getUserDocumentsKey() {
+      const currentUserEmail = localStorage.getItem('currentUser');
+      if (!currentUserEmail) return null;
+      return `userDocuments_${currentUserEmail}`;
+    }
+    
+    // Charger les documents existants
+    function loadDocuments() {
+      const userKey = getUserDocumentsKey();
+      if (!userKey) {
+        // Utilisateur non connecté, vider les documents
+        documentsContainer.innerHTML = '';
+        emptyState.style.display = 'block';
+        emptyState.innerHTML = `
+          <i data-lucide="user-x" width="48" height="48"></i>
+          <p>Veuillez vous connecter pour accéder à vos documents</p>
         `;
-        resultsSection.appendChild(doctorCard);
-      });
+        lucide.createIcons();
+        return;
+      }
       
-      // Recréer les icônes Lucide pour les nouveaux éléments
+      try {
+        const documents = JSON.parse(localStorage.getItem(userKey) || '[]');
+        
+        if (documents.length > 0) {
+          emptyState.style.display = 'none';
+          
+          documents.forEach(doc => {
+            addDocumentToList(doc);
+          });
+        } else {
+          emptyState.style.display = 'block';
+          emptyState.innerHTML = `
+            <i data-lucide="folder-open" width="48" height="48"></i>
+            <p>Aucun document pour le moment</p>
+            <p>Importez votre premier document</p>
+          `;
+          lucide.createIcons();
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des documents:", error);
+        // Réinitialiser les documents en cas d'erreur
+        localStorage.setItem(userKey, '[]');
+        emptyState.style.display = 'block';
+      }
+    }
+    
+    fileInput.addEventListener('change', function(e) {
+      const userKey = getUserDocumentsKey();
+      if (!userKey) {
+        alert('Veuillez vous connecter pour importer des documents');
+        this.value = '';
+        return;
+      }
+      
+      if (this.files && this.files[0]) {
+        handleFileUpload(this.files[0], userKey);
+        this.value = '';
+      }
+    });
+    
+    function handleFileUpload(file, userKey) {
+      const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      const validDocumentTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+      
+      if (!validImageTypes.includes(file.type) && !validDocumentTypes.includes(file.type)) {
+        alert("Type de fichier non supporté. Veuillez sélectionner une image ou un document (PDF, Word, texte).");
+        return;
+      }
+      
+      // Limite de taille réduite à 5MB pour éviter les problèmes de localStorage
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Le fichier est trop volumineux. Taille maximale: 5MB");
+        return;
+      }
+      
+      // Convertir le fichier en base64 pour le stockage
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const documentData = {
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            data: e.target.result,
+            uploaded: new Date().toISOString()
+          };
+          
+          // Stocker le document avec la clé spécifique à l'utilisateur
+          let documents = JSON.parse(localStorage.getItem(userKey) || '[]');
+          documents.push(documentData);
+          localStorage.setItem(userKey, JSON.stringify(documents));
+          
+          // Ajouter à la liste
+          addDocumentToList(documentData);
+        } catch (error) {
+          console.error("Erreur lors du stockage du document:", error);
+          alert("Erreur lors de l'importation du document. Le fichier est peut-être trop volumineux.");
+        }
+      };
+      
+      reader.onerror = function() {
+        alert("Erreur lors de la lecture du fichier.");
+      };
+      
+      reader.readAsDataURL(file);
+    }
+    
+    function addDocumentToList(documentData) {
+      if (emptyState.style.display !== 'none') {
+        emptyState.style.display = 'none';
+      }
+      
+      const fileExtension = documentData.name.split('.').pop().toLowerCase();
+      const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension);
+      const isPDF = fileExtension === 'pdf';
+      
+      let iconName = 'file';
+      if (isImage) iconName = 'image';
+      if (isPDF) iconName = 'file-text';
+      
+      const documentItem = document.createElement('div');
+      documentItem.className = 'document-item';
+      documentItem.setAttribute('data-filename', documentData.name);
+      documentItem.onclick = function() {
+        viewDocument(this.getAttribute('data-filename'));
+      };
+      
+      documentItem.innerHTML = `
+        <div class="document-icon-small">
+          <i data-lucide="${iconName}"></i>
+        </div>
+        <div class="document-info">
+          <h4 class="document-name">${documentData.name}</h4>
+          <div class="document-details">
+            <span>${formatFileSize(documentData.size)}</span>
+            <span>•</span>
+            <span>Ajouté aujourd'hui</span>
+          </div>
+        </div>
+        <div class="document-actions">
+          <button class="action-btn" title="Supprimer" onclick="event.stopPropagation(); removeDocument('${documentData.name}')">
+            <i data-lucide="trash-2"></i>
+          </button>
+        </div>
+      `;
+      
+      documentsContainer.appendChild(documentItem);
       lucide.createIcons();
     }
-
-    function discuterAvecMedecin(medecinName) {
-      // Stocker le nom du médecin dans localStorage
-      localStorage.setItem('medecinSelectionne', medecinName);
-      
-      // Rediriger vers Mess2.html
-      window.location.href = 'Mess2.html';
+    
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + " bytes";
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+      else return (bytes / 1048576).toFixed(1) + " MB";
     }
+    
+    function viewDocument(filename) {
+      const userKey = getUserDocumentsKey();
+      if (!userKey) {
+        alert('Veuillez vous connecter pour visualiser les documents');
+        return;
+      }
+      
+      try {
+        const documents = JSON.parse(localStorage.getItem(userKey) || '[]');
+        const document = documents.find(doc => doc.name === filename);
+        
+        if (!document) {
+          alert("Document non trouvé.");
+          return;
+        }
+        
+        // Afficher un indicateur de chargement
+        modalBody.innerHTML = `
+          <div class="loading">
+            <i data-lucide="loader" class="loading-icon"></i>
+          </div>
+        `;
+        lucide.createIcons();
+        
+        modal.style.display = 'flex';
+        
+        // Petit délai pour permettre l'affichage de l'indicateur de chargement
+        setTimeout(() => {
+          renderDocumentContent(document);
+        }, 100);
+      } catch (error) {
+        console.error("Erreur lors de l'affichage du document:", error);
+        alert("Erreur lors de l'ouverture du document.");
+      }
+    }
+    
+    function renderDocumentContent(document) {
+      modalBody.innerHTML = '';
+      
+      if (document.type.includes('image')) {
+        // Afficher une image
+        const img = document.createElement('img');
+        img.src = document.data;
+        img.alt = document.name;
+        img.onload = function() {
+          lucide.createIcons();
+        };
+        modalBody.appendChild(img);
+      } else if (document.type === 'application/pdf') {
+        // Afficher un PDF avec iframe (meilleure compatibilité)
+        const iframe = document.createElement('iframe');
+        iframe.src = document.data;
+        iframe.width = '100%';
+        iframe.height = '500px';
+        iframe.title = document.name;
+        modalBody.appendChild(iframe);
+      } else {
+        // Pour les autres types de documents
+        const message = document.createElement('div');
+        message.className = 'cannot-preview';
+        message.innerHTML = `
+          <i data-lucide="file" width="48" height="48"></i>
+          <p>Ce type de document ne peut pas être prévisualisé.</p>
+          <p>Nom: ${document.name}</p>
+          <p>Taille: ${formatFileSize(document.size)}</p>
+        `;
+        modalBody.appendChild(message);
+        lucide.createIcons();
+      }
+    }
+    
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+    
+    function removeDocument(filename) {
+      const userKey = getUserDocumentsKey();
+      if (!userKey) {
+        alert('Veuillez vous connecter pour supprimer des documents');
+        return;
+      }
+      
+      if (!confirm("Êtes-vous sûr de vouloir supprimer ce document ?")) {
+        return;
+      }
+      
+      try {
+        let documents = JSON.parse(localStorage.getItem(userKey) || '[]');
+        documents = documents.filter(doc => doc.name !== filename);
+        localStorage.setItem(userKey, JSON.stringify(documents));
+        
+        documentsContainer.innerHTML = '';
+        loadDocuments();
+        
+        if (documents.length === 0) {
+          emptyState.style.display = 'block';
+        }
+      } catch (error) {
+        console.error("Erreur lors de la suppression du document:", error);
+        alert("Erreur lors de la suppression du document.");
+      }
+    }
+    
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+    
+    // Charger les documents au démarrage
+    loadDocuments();
   </script>
 </body>
 </html>
