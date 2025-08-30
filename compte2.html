@@ -181,23 +181,6 @@
       max-width: 200px;
     }
 
-    .btn-edit {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: bold;
-      width: 100%;
-      cursor: pointer;
-      margin-bottom: 15px;
-      transition: 0.3s ease;
-    }
-
-    .btn-edit:hover {
-      background: #0088cc;
-    }
-
     .btn-logout {
       background: var(--highlight);
       color: white;
@@ -247,94 +230,6 @@
       stroke-width: 2;
     }
 
-    /* Modal d'édition */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background: var(--card-bg);
-      padding: 25px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 400px;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    .modal-title {
-      color: var(--accent);
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #555;
-      background: var(--card-bg);
-      color: var(--text-color);
-      box-sizing: border-box;
-    }
-
-    .password-fields {
-      display: none;
-    }
-
-    .toggle-password-edit {
-      color: var(--accent);
-      cursor: pointer;
-      font-size: 0.9em;
-      margin-top: 5px;
-      display: inline-block;
-    }
-
-    .modal-buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .confirm-btn {
-      background: var(--success);
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 6px;
-      flex: 1;
-      cursor: pointer;
-    }
-
-    .cancel-btn {
-      background: #6c757d;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 6px;
-      flex: 1;
-      cursor: pointer;
-    }
-
     /* Input file caché pour l'avatar */
     #avatarInput {
       display: none;
@@ -372,8 +267,13 @@
       <h3>Informations personnelles</h3>
       
       <div class="info-item">
-        <span class="info-label">Nom complet</span>
-        <span class="info-value" id="infoFullName">-</span>
+        <span class="info-label">Nom</span>
+        <span class="info-value" id="infoLastName">-</span>
+      </div>
+      
+      <div class="info-item">
+        <span class="info-label">Prénom</span>
+        <span class="info-value" id="infoFirstName">-</span>
       </div>
       
       <div class="info-item">
@@ -402,79 +302,14 @@
       </div>
     </div>
 
-    <button class="btn-edit" onclick="openEditModal()">
-      <i data-lucide="edit"></i> Modifier mes informations
-    </button>
-
     <button class="btn-logout" onclick="logout()">
       <i data-lucide="log-out"></i> Se déconnecter
     </button>
   </div>
 
-  <!-- Modal d'édition -->
-  <div class="modal" id="editModal">
-    <div class="modal-content">
-      <h3 class="modal-title">Modifier mes informations</h3>
-      
-      <div class="form-group">
-        <label for="editFullName">Nom complet</label>
-        <input type="text" id="editFullName" required>
-      </div>
-      
-      <div class="form-group">
-        <label for="editCountry">Pays</label>
-        <select id="editCountry" required>
-          <option value="">Sélectionnez votre pays</option>
-          <option value="Madagascar">Madagascar</option>
-          <option value="France">France</option>
-          <option value="Canada">Canada</option>
-          <option value="Belgique">Belgique</option>
-          <option value="Suisse">Suisse</option>
-          <option value="Autre">Autre</option>
-        </select>
-      </div>
-      
-      <div class="form-group">
-        <label for="editGender">Sexe</label>
-        <select id="editGender" required>
-          <option value="">Sélectionnez</option>
-          <option value="Homme">Homme</option>
-          <option value="Femme">Femme</option>
-          <option value="Autre">Autre</option>
-        </select>
-      </div>
-      
-      <div class="form-group">
-        <label for="editBirthdate">Date de naissance</label>
-        <input type="date" id="editBirthdate" required>
-      </div>
-
-      <div class="form-group">
-        <span class="toggle-password-edit" onclick="togglePasswordFields()">
-          <i data-lucide="edit"></i> Modifier le mot de passe
-        </span>
-        <div class="password-fields" id="passwordFields">
-          <label for="editCurrentPassword">Mot de passe actuel</label>
-          <input type="password" id="editCurrentPassword">
-          
-          <label for="editNewPassword">Nouveau mot de passe</label>
-          <input type="password" id="editNewPassword" minlength="6">
-          
-          <label for="editConfirmPassword">Confirmer le nouveau mot de passe</label>
-          <input type="password" id="editConfirmPassword" minlength="6">
-        </div>
-      </div>
-
-      <div class="modal-buttons">
-        <button class="cancel-btn" onclick="closeEditModal()">Annuler</button>
-        <button class="confirm-btn" onclick="saveChanges()">Enregistrer</button>
-      </div>
-    </div>
-  </div>
-
   <nav class="bottom-nav">
     <a href="bitget2.html"><i data-lucide="home"></i>Accueil</a>
-    <a href="formation2.html"><i data-lucide="heart-pulse"></i>Support médical</a>
+    <a href="formation2.html"><i data-lucide="folder-open"></i>Documents</a>
     <a href="choix-premium2.html"><i data-lucide="calendar"></i>Rendez-vous</a>
     <a href="compte2.html"><i data-lucide="user-round"></i>Compte</a>
   </nav>
@@ -513,8 +348,12 @@
       const currentUser = userAccounts.find(user => user.email === currentUserEmail);
 
       if (currentUser) {
-        // Afficher les informations
-        document.getElementById('userName').textContent = currentUser.fullName || 'Utilisateur';
+        // Afficher les informations - NOUVELLE VERSION avec nom et prénom séparés
+        const fullName = currentUser.lastName && currentUser.firstName 
+          ? `${currentUser.lastName} ${currentUser.firstName}`
+          : currentUser.fullName || 'Utilisateur';
+        
+        document.getElementById('userName').textContent = fullName;
         document.getElementById('userEmail').textContent = currentUser.email;
         
         // Afficher l'avatar s'il existe
@@ -526,10 +365,18 @@
         } else {
           avatarImg.src = '';
           avatarImg.style.background = 'var(--accent)';
-          avatarImg.innerHTML = currentUser.fullName ? currentUser.fullName.charAt(0).toUpperCase() : 'U';
+          // Utiliser la première lettre du prénom ou du nom complet
+          const initial = currentUser.firstName 
+            ? currentUser.firstName.charAt(0).toUpperCase()
+            : currentUser.fullName 
+              ? currentUser.fullName.charAt(0).toUpperCase()
+              : 'U';
+          avatarImg.innerHTML = initial;
         }
         
-        document.getElementById('infoFullName').textContent = currentUser.fullName || '-';
+        // Afficher les informations détaillées
+        document.getElementById('infoLastName').textContent = currentUser.lastName || '-';
+        document.getElementById('infoFirstName').textContent = currentUser.firstName || '-';
         document.getElementById('infoEmail').textContent = currentUser.email || '-';
         document.getElementById('infoPhone').textContent = currentUser.phone || '-';
         document.getElementById('infoCountry').textContent = currentUser.country || '-';
@@ -608,97 +455,6 @@
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
-    }
-
-    // Modal d'édition
-    function openEditModal() {
-      const currentUserEmail = localStorage.getItem('currentUser');
-      const userAccounts = JSON.parse(localStorage.getItem('userAccounts') || '[]');
-      const currentUser = userAccounts.find(user => user.email === currentUserEmail);
-
-      if (currentUser) {
-        document.getElementById('editFullName').value = currentUser.fullName || '';
-        document.getElementById('editCountry').value = currentUser.country || '';
-        document.getElementById('editGender').value = currentUser.gender || '';
-        document.getElementById('editBirthdate').value = currentUser.birthdate || '';
-        
-        // Cacher les champs de mot de passe
-        document.getElementById('passwordFields').style.display = 'none';
-        document.getElementById('editCurrentPassword').value = '';
-        document.getElementById('editNewPassword').value = '';
-        document.getElementById('editConfirmPassword').value = '';
-      }
-
-      document.getElementById('editModal').style.display = 'flex';
-    }
-
-    function closeEditModal() {
-      document.getElementById('editModal').style.display = 'none';
-    }
-
-    function togglePasswordFields() {
-      const passwordFields = document.getElementById('passwordFields');
-      passwordFields.style.display = passwordFields.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function saveChanges() {
-      const fullName = document.getElementById('editFullName').value.trim();
-      const country = document.getElementById('editCountry').value;
-      const gender = document.getElementById('editGender').value;
-      const birthdate = document.getElementById('editBirthdate').value;
-      
-      const currentPassword = document.getElementById('editCurrentPassword').value;
-      const newPassword = document.getElementById('editNewPassword').value;
-      const confirmPassword = document.getElementById('editConfirmPassword').value;
-
-      if (!fullName || !country || !gender || !birthdate) {
-        alert('Veuillez remplir tous les champs obligatoires');
-        return;
-      }
-
-      // Vérification du mot de passe si modification demandée
-      if (document.getElementById('passwordFields').style.display === 'block') {
-        if (!currentPassword || !newPassword || !confirmPassword) {
-          alert('Veuillez remplir tous les champs de mot de passe');
-          return;
-        }
-
-        if (newPassword.length < 6) {
-          alert('Le nouveau mot de passe doit contenir au moins 6 caractères');
-          return;
-        }
-
-        if (newPassword !== confirmPassword) {
-          alert('Les nouveaux mots de passe ne correspondent pas');
-          return;
-        }
-      }
-
-      const currentUserEmail = localStorage.getItem('currentUser');
-      const userAccounts = JSON.parse(localStorage.getItem('userAccounts') || '[]');
-      const userIndex = userAccounts.findIndex(user => user.email === currentUserEmail);
-
-      if (userIndex !== -1) {
-        // Mettre à jour les informations de base
-        userAccounts[userIndex].fullName = fullName;
-        userAccounts[userIndex].country = country;
-        userAccounts[userIndex].gender = gender;
-        userAccounts[userIndex].birthdate = birthdate;
-
-        // Mettre à jour le mot de passe si nécessaire
-        if (document.getElementById('passwordFields').style.display === 'block') {
-          if (userAccounts[userIndex].password !== currentPassword) {
-            alert('Mot de passe actuel incorrect');
-            return;
-          }
-          userAccounts[userIndex].password = newPassword;
-        }
-
-        localStorage.setItem('userAccounts', JSON.stringify(userAccounts));
-        loadUserInfo(); // Recharger les informations
-        closeEditModal();
-        alert('Informations mises à jour avec succès !');
-      }
     }
 
     // Déconnexion
